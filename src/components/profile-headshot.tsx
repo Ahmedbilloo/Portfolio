@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Camera, Upload, RotateCcw, Check } from "lucide-react";
 
-const defaultHeadshot = "/ahmed-headshot.jpg";
+// Keep the production image on the public GitHub repository so the headshot
+// is available even if an older Vercel build does not include the binary asset.
+const defaultHeadshot = "https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/public/ahmed-headshot.jpg";
 
 interface ProfileHeadshotProps {
   name: string;
 }
 
-const STORAGE_KEY = "portfolio_user_headshot_v2";
+const STORAGE_KEY = "portfolio_user_headshot_v3";
 
 export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
   const [imageSrc, setImageSrc] = useState<string>(defaultHeadshot);
@@ -81,6 +83,7 @@ export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
           alt={name}
           className="size-full object-cover object-[center_12%] transition-transform duration-300 group-hover:scale-[1.02]"
           loading="eager"
+          decoding="async"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white p-4 text-center">
           <Camera className="size-7 mb-2 text-white" />
