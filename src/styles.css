@@ -1,0 +1,166 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system — Ahmed Billoo portfolio.
+ * Light: off-white canvas, white cards, near-black ink, professional blue accent.
+ * Dark: charcoal canvas, same blue accent.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-surface: var(--surface);
+  --color-code-bg: var(--code-bg);
+  --color-code-fg: var(--code-fg);
+  --color-code-keyword: var(--code-keyword);
+  --color-code-string: var(--code-string);
+  --color-code-comment: var(--code-comment);
+  --color-code-number: var(--code-number);
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.19 0.012 260);
+  --surface: oklch(0.968 0.003 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.012 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.012 260);
+  --primary: oklch(0.55 0.18 258);
+  --primary-foreground: oklch(0.99 0.002 250);
+  --secondary: oklch(0.962 0.004 250);
+  --secondary-foreground: oklch(0.25 0.012 260);
+  --muted: oklch(0.962 0.004 250);
+  --muted-foreground: oklch(0.53 0.014 258);
+  --accent: oklch(0.95 0.02 258);
+  --accent-foreground: oklch(0.42 0.16 258);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0.002 250);
+  --border: oklch(0.918 0.005 255);
+  --input: oklch(0.918 0.005 255);
+  --ring: oklch(0.55 0.18 258);
+  --code-bg: oklch(0.21 0.014 262);
+  --code-fg: oklch(0.9 0.008 255);
+  --code-keyword: oklch(0.75 0.13 275);
+  --code-string: oklch(0.8 0.12 150);
+  --code-comment: oklch(0.6 0.012 258);
+  --code-number: oklch(0.82 0.11 70);
+  --shadow-card: 0 1px 2px 0 oklch(0.2 0.02 260 / 0.04);
+  --shadow-lift: 0 8px 30px -12px oklch(0.2 0.02 260 / 0.18);
+}
+
+.dark {
+  --background: oklch(0.185 0.008 260);
+  --foreground: oklch(0.965 0.003 250);
+  --surface: oklch(0.215 0.009 260);
+  --card: oklch(0.225 0.009 260);
+  --card-foreground: oklch(0.965 0.003 250);
+  --popover: oklch(0.225 0.009 260);
+  --popover-foreground: oklch(0.965 0.003 250);
+  --primary: oklch(0.68 0.15 255);
+  --primary-foreground: oklch(0.18 0.01 260);
+  --secondary: oklch(0.26 0.01 260);
+  --secondary-foreground: oklch(0.95 0.003 250);
+  --muted: oklch(0.26 0.01 260);
+  --muted-foreground: oklch(0.71 0.012 258);
+  --accent: oklch(0.3 0.035 258);
+  --accent-foreground: oklch(0.85 0.09 255);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.98 0.003 250);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.68 0.15 255);
+  --code-bg: oklch(0.155 0.008 260);
+  --code-fg: oklch(0.9 0.008 255);
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-lift: 0 8px 30px -12px oklch(0 0 0 / 0.55);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1.25rem;
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+@utility card-surface {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+/* Hero profile card photo. The placeholder markup remains in place for accessibility,
+   while the actual headshot is supplied from the CDN asset. */
+main > section:first-child .aspect-square {
+  background-image: url("/__l5e/assets-v1/48e20adf-8092-4c3a-9836-5758fd896344/headshot.jpg");
+  background-size: cover;
+  background-position: center 22%;
+}
+
+main > section:first-child .aspect-square > div {
+  display: none;
+}
