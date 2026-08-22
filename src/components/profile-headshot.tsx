@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Camera, Upload, RotateCcw, Check } from "lucide-react";
-import defaultHeadshot from "@/assets/ahmed-headshot.svg";
+
+const defaultHeadshot = "/ahmed-headshot.jpg";
 
 interface ProfileHeadshotProps {
   name: string;
 }
 
-const STORAGE_KEY = "portfolio_user_headshot";
+const STORAGE_KEY = "portfolio_user_headshot_v2";
 
 export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
   const [imageSrc, setImageSrc] = useState<string>(defaultHeadshot);
