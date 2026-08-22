@@ -16,10 +16,19 @@
     <meta name="twitter:title" content="Ahmed Billoo | Data Analyst Portfolio" />
     <meta name="twitter:description" content="M.S. Business Analytics · Python, SQL, Tableau, Predictive Analytics." />
     
+    <!-- Theme initialization -->
+    <script>
+      try {
+        var t = localStorage.getItem('theme');
+        var d = t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (d) document.documentElement.classList.add('dark');
+      } catch (e) {}
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-neutral-50 text-neutral-900 antialiased selection:bg-blue-600 selection:text-white transition-colors duration-200">
     <div id="root"></div>

@@ -1,6 +1,7 @@
 export const site = {
   name: "Ahmed Billoo",
   role: "Data Analyst",
+  headshot: "/headshot.jpg",
   email: "hello@ahmedbilloo.com",
   phone: "+1 (000) 000-0000",
   linkedin: "https://www.linkedin.com/in/ahmedbilloo",

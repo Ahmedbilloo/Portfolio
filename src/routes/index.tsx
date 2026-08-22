@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Code2, Download, ImageIcon, Linkedin, Mail, Phone } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { ProfileHeadshot } from "@/components/profile-headshot";
 import { projects, site } from "@/data/site";
 
 const TITLE = "Ahmed Billoo — Data Analyst | Business Analytics Portfolio";
@@ -112,12 +113,7 @@ function Home() {
 
             <div className="justify-self-center lg:justify-self-center">
               <div className="w-64 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-80 sm:p-6">
-                <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-surface">
-                  <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface">
-                    <ImageIcon className="size-6 text-muted-foreground" />
-                    <p className="px-8 text-center text-xs text-muted-foreground">Headshot placeholder — replace with your own photograph</p>
-                  </div>
-                </div>
+                <ProfileHeadshot name={site.name} />
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <div className="rounded-xl border border-border bg-surface p-3.5">
                     <p className="text-xs text-muted-foreground">Education</p>

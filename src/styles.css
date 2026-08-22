@@ -152,15 +152,3 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 }
-
-/* Hero profile card photo. The placeholder markup remains in place for accessibility,
-   while the actual headshot is supplied from the CDN asset. */
-main > section:first-child .aspect-square {
-  background-image: url("/__l5e/assets-v1/48e20adf-8092-4c3a-9836-5758fd896344/headshot.jpg");
-  background-size: cover;
-  background-position: center 22%;
-}
-
-main > section:first-child .aspect-square > div {
-  display: none;
-}
