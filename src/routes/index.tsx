@@ -99,7 +99,7 @@ function Home() {
               <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">{site.name}</h1>
               <p className="mt-3 text-2xl font-medium tracking-tight text-primary sm:text-3xl">Data Analyst</p>
               <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
-                M.S. in Business Analytics graduate and Data Analyst with 4+ years of experience in pharmaceutical distribution and supply chain operations. I combine hands-on business experience with data analytics to identify patterns, improve processes, and support better decision making. My work spans demand forecasting, inventory optimization, business intelligence, dashboard development, and predictive analytics, using Python, SQL, Tableau, Power BI, and R. I enjoy turning complex business data into practical insights that drive better decisions and measurable operational impact.
+                M.S. in Business Analytics graduate and Data Analyst with 4+ years of experience in pharmaceutical distribution and supply chain operations. I combine business expertise with data analytics to uncover insights, improve processes, and support smarter decisions. My work includes demand forecasting, inventory optimization, business intelligence, dashboard development, and predictive analytics using Python, SQL, Tableau, Power BI, and R. I turn complex data into practical insights that drive measurable business impact.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link to="/" hash="projects" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
