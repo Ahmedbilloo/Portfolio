@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Camera, Upload, RotateCcw, Check } from "lucide-react";
 
-// Default to the headshot in the /public folder with remote GitHub fallback
-const defaultHeadshot = "/headshot.png";
-const remoteFallbackHeadshot = "https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/public/ahmed-headshot.jpg";
+// The image is stored in /public, so Vite serves it from the site root.
+const defaultHeadshot = "/Headshot.png";
 
 interface ProfileHeadshotProps {
   name: string;
 }
 
-const STORAGE_KEY = "portfolio_user_headshot_v3";
+// Bump the key so any old saved/broken image URL from the previous deployment is ignored.
+const STORAGE_KEY = "portfolio_user_headshot_v4";
 
 export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
   const [imageSrc, setImageSrc] = useState<string>(defaultHeadshot);
@@ -85,8 +85,11 @@ export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
           loading="eager"
           decoding="async"
           onError={() => {
-            if (imageSrc !== remoteFallbackHeadshot) {
-              setImageSrc(remoteFallbackHeadshot);
+            // If an old saved image URL fails, fall back to the current public image.
+            if (imageSrc !== defaultHeadshot) {
+              setImageSrc(defaultHeadshot);
+              setIsCustom(false);
+              try { localStorage.removeItem(STORAGE_KEY); } catch { /* Ignore storage errors */ }
             }
           }}
         />
