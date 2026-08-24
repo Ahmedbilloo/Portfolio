@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Camera, Upload, RotateCcw, Check } from "lucide-react";
 
 // The image is stored in /public, so Vite serves it from the site root.
-const defaultHeadshot = "/Headshot.png";
+const defaultHeadshot = "/headshot.png";
 
 interface ProfileHeadshotProps {
   name: string;
