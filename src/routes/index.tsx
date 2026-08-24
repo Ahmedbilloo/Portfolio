@@ -124,8 +124,8 @@ function Home() {
                     <p className="mt-2 text-xs text-primary">CSU Sacramento</p>
                   </div>
                   <div className="rounded-xl border border-border bg-surface p-3.5">
-                    <p className="text-xs text-muted-foreground">Focus</p>
-                    <p className="mt-2 text-sm font-semibold leading-snug text-foreground">Data Analytics &amp; ML</p>
+                    <p className="text-xs text-muted-foreground">Expertise</p>
+                    <p className="mt-2 text-sm font-semibold leading-snug text-foreground">Data Analytics &amp; Machine Learning</p>
                   </div>
                 </div>
               </div>
