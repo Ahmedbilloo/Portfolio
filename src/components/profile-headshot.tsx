@@ -9,7 +9,7 @@ export function ProfileHeadshot({ name }: ProfileHeadshotProps) {
     <div className="relative group">
       <div
         id="profile-headshot-container"
-        className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-surface"
+        className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-surface"
       >
         <img
           src={defaultHeadshot}
