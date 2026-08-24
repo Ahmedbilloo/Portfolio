@@ -101,7 +101,7 @@ function Home() {
               <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
                 M.S. in Business Analytics graduate and Data Analyst with 4+ years of experience in pharmaceutical distribution and supply chain operations. I combine hands-on business experience with data analytics to identify patterns, improve processes, and support better decision making. My work spans demand forecasting, inventory optimization, business intelligence, dashboard development, and predictive analytics, using Python, SQL, Tableau, Power BI, and R. I enjoy turning complex business data into practical insights that drive better decisions and measurable operational impact.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-wrap gap-3">
                 <Link to="/" hash="projects" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
                   View Projects <ArrowRight className="size-4" />
                 </Link>
