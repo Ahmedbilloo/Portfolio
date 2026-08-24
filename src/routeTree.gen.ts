@@ -10,6 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
+import { Route as ProjectsBIRouteImport } from './routes/projects.business-intelligence-forecasting'
+import { Route as ProjectsLoanRouteImport } from './routes/projects.loan-default-prediction'
+import { Route as ProjectsCardioRouteImport } from './routes/projects.cardiovascular-risk-prediction'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -17,26 +22,99 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
+  id: '/projects/$slug',
+  path: '/projects/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const ProjectsBIRoute = ProjectsBIRouteImport.update({
+  id: '/projects/business-intelligence-forecasting',
+  path: '/projects/business-intelligence-forecasting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const ProjectsLoanRoute = ProjectsLoanRouteImport.update({
+  id: '/projects/loan-default-prediction',
+  path: '/projects/loan-default-prediction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const ProjectsCardioRoute = ProjectsCardioRouteImport.update({
+  id: '/projects/cardiovascular-risk-prediction',
+  path: '/projects/cardiovascular-risk-prediction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/projects': typeof ProjectsIndexRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects/business-intelligence-forecasting': typeof ProjectsBIRoute
+  '/projects/loan-default-prediction': typeof ProjectsLoanRoute
+  '/projects/cardiovascular-risk-prediction': typeof ProjectsCardioRoute
 }
+
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/projects': typeof ProjectsIndexRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects/business-intelligence-forecasting': typeof ProjectsBIRoute
+  '/projects/loan-default-prediction': typeof ProjectsLoanRoute
+  '/projects/cardiovascular-risk-prediction': typeof ProjectsCardioRoute
 }
+
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/projects/': typeof ProjectsIndexRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects/business-intelligence-forecasting': typeof ProjectsBIRoute
+  '/projects/loan-default-prediction': typeof ProjectsLoanRoute
+  '/projects/cardiovascular-risk-prediction': typeof ProjectsCardioRoute
 }
+
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/projects'
+    | '/projects/$slug'
+    | '/projects/business-intelligence-forecasting'
+    | '/projects/loan-default-prediction'
+    | '/projects/cardiovascular-risk-prediction'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/projects'
+    | '/projects/$slug'
+    | '/projects/business-intelligence-forecasting'
+    | '/projects/loan-default-prediction'
+    | '/projects/cardiovascular-risk-prediction'
+  id:
+    | '__root__'
+    | '/'
+    | '/projects/'
+    | '/projects/$slug'
+    | '/projects/business-intelligence-forecasting'
+    | '/projects/loan-default-prediction'
+    | '/projects/cardiovascular-risk-prediction'
   fileRoutesById: FileRoutesById
 }
+
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
+  ProjectsSlugRoute: typeof ProjectsSlugRoute
+  ProjectsBIRoute: typeof ProjectsBIRoute
+  ProjectsLoanRoute: typeof ProjectsLoanRoute
+  ProjectsCardioRoute: typeof ProjectsCardioRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,12 +126,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$slug': {
+      id: '/projects/$slug'
+      path: '/projects/$slug'
+      fullPath: '/projects/$slug'
+      preLoaderRoute: typeof ProjectsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/business-intelligence-forecasting': {
+      id: '/projects/business-intelligence-forecasting'
+      path: '/projects/business-intelligence-forecasting'
+      fullPath: '/projects/business-intelligence-forecasting'
+      preLoaderRoute: typeof ProjectsBIRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/loan-default-prediction': {
+      id: '/projects/loan-default-prediction'
+      path: '/projects/loan-default-prediction'
+      fullPath: '/projects/loan-default-prediction'
+      preLoaderRoute: typeof ProjectsLoanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/cardiovascular-risk-prediction': {
+      id: '/projects/cardiovascular-risk-prediction'
+      path: '/projects/cardiovascular-risk-prediction'
+      fullPath: '/projects/cardiovascular-risk-prediction'
+      preLoaderRoute: typeof ProjectsCardioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
+  ProjectsSlugRoute: ProjectsSlugRoute,
+  ProjectsBIRoute: ProjectsBIRoute,
+  ProjectsLoanRoute: ProjectsLoanRoute,
+  ProjectsCardioRoute: ProjectsCardioRoute,
 }
+
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()

@@ -4,6 +4,7 @@ import { ArrowRight, Code2, Download, ImageIcon, Linkedin, Mail, Phone } from "l
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { ProfileHeadshot } from "@/components/profile-headshot";
+import { CodeViewerModal } from "@/components/code-viewer-modal";
 import { projects, site } from "@/data/site";
 
 const TITLE = "Ahmed Billoo — Data Analyst | Business Analytics Portfolio";
@@ -87,6 +88,8 @@ function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) 
 
 function Home() {
   const [sent, setSent] = useState(false);
+  const [codeViewerOpen, setCodeViewerOpen] = useState(false);
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
 
   return (
     <div className="min-h-screen">
@@ -151,7 +154,16 @@ function Home() {
                     </div>
                     <div className="mt-6 flex flex-wrap items-center gap-2 pt-1">
                       <Link to={p.to} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">View Project <ArrowRight className="size-3.5" /></Link>
-                      {p.codeUrl && <a href={p.codeUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-sm font-medium transition-colors hover:bg-accent"><Code2 className="size-3.5" /> View Code</a>}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedProjectSlug(p.slug);
+                          setCodeViewerOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Code2 className="size-3.5" /> View Code
+                      </button>
                     </div>
                   </div>
                 </article>
@@ -159,6 +171,13 @@ function Home() {
             </div>
           </div>
         </section>
+
+        {/* Code Viewer Sub-Window Modal */}
+        <CodeViewerModal
+          isOpen={codeViewerOpen}
+          onClose={() => setCodeViewerOpen(false)}
+          initialSlug={selectedProjectSlug}
+        />
 
         {/* Experience */}
         <section id="experience" className="border-b border-border">
