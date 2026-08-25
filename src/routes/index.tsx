@@ -52,14 +52,12 @@ const experience = [
 ];
 
 const skills = [
-  { group: "Programming", items: ["Python", "R", "SQL"] },
-  { group: "Data Analysis", items: ["Pandas", "NumPy", "Excel"] },
-  { group: "Visualization", items: ["Tableau", "Power BI", "Matplotlib", "ggplot2"] },
-  { group: "Statistical Analysis", items: ["Regression", "Hypothesis Testing", "Forecasting"] },
-  {
-    group: "Machine Learning",
-    items: ["Scikit-learn", "Random Forest", "Decision Trees", "Neural Networks", "Feature Engineering", "Model Evaluation", "Time Series Forecasting"],
-  },
+  { group: "Programming & Databases", items: ["Python", "R", "SQL", "Microsoft SQL Server"] },
+  { group: "Data Analysis", items: ["Pandas", "NumPy", "Excel", "Data Cleaning", "Exploratory Data Analysis"] },
+  { group: "Statistical Analysis", items: ["Regression Analysis", "Hypothesis Testing", "Statistical Modeling", "Forecasting"] },
+  { group: "Data Visualization & BI", items: ["Tableau", "Power BI", "Matplotlib", "ggplot2", "Dashboard Development"] },
+  { group: "Machine Learning", items: ["Scikit-learn", "Decision Trees", "Random Forest", "Neural Networks", "Feature Engineering", "Model Evaluation"] },
+  { group: "Predictive Analytics", items: ["Time Series Forecasting", "Demand Forecasting", "Predictive Modeling", "Inventory Optimization"] },
 ];
 
 function Highlighted({ text }: { text: string }) {
