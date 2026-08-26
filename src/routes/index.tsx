@@ -1,46 +1,253 @@
-import { ArrowRight, Download } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ProjectDetailView } from "@/components/project-detail-view";
-import { ProfileHeadshot } from "@/components/profile-headshot";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Code2, Download, ImageIcon, Linkedin, Mail, Phone } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { ProfileHeadshot } from "@/components/profile-headshot";
+import { CodeViewerModal } from "@/components/code-viewer-modal";
 import { projects, site } from "@/data/site";
 
-export default function Home() {
+const TITLE = "Ahmed Billoo — Data Analyst | Business Analytics Portfolio";
+const DESCRIPTION =
+  "Data Analyst and M.S. Business Analytics graduate. Dashboards, demand forecasting, and predictive analytics with SQL, Python, Tableau, Power BI, and R.";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "https://ahmedbilloo.com/" },
+    ],
+    links: [{ rel: "canonical", href: "https://ahmedbilloo.com/" }],
+  }),
+  component: Home,
+});
+
+const experience = [
+  {
+    company: "Jawed Traders",
+    role: "Operations Manager",
+    period: "June 2021 – Present",
+    location: "Karachi, Pakistan",
+    points: [
+      "Designed and implemented a Python-based demand forecasting model using time series analysis to optimize inventory planning, reducing stockouts by [[30%]].",
+      "Developed an interactive Tableau Business Intelligence dashboard to monitor sales, inventory, lead times, safety stock, and operational KPIs, enabling data-driven procurement decisions.",
+      "Reduced procurement lead times by [[25%]] through demand forecasting and data-driven inventory planning.",
+      "Managed pharmaceutical distribution for [[100+ hospitals]] while collaborating with suppliers including GSK, Pfizer, and Abbott to maintain inventory availability and regulatory compliance.",
+    ],
+  },
+  {
+    company: "GoZayaan",
+    role: "Supply Chain Associate",
+    period: "January 2020 – June 2021",
+    location: "Karachi, Pakistan",
+    points: [
+      "Supported the launch of two products by analyzing vendor data, pricing terms, and service capacity.",
+      "Managed relationships with [[20+ vendors]] — local and international — to ensure timely service delivery.",
+      "Analyzed vendor pricing and performance data to support negotiations and improve responsiveness.",
+    ],
+  },
+];
+
+const skills = [
+  { group: "Programming & Databases", items: ["Python", "R", "SQL", "Microsoft SQL Server"] },
+  { group: "Data Analysis", items: ["Pandas", "NumPy", "Excel", "Data Cleaning", "Exploratory Data Analysis"] },
+  { group: "Statistical Analysis", items: ["Regression Analysis", "Hypothesis Testing", "Statistical Modeling", "Forecasting"] },
+  { group: "Data Visualization & BI", items: ["Tableau", "Power BI", "Matplotlib", "ggplot2", "Dashboard Development"] },
+  { group: "Machine Learning", items: ["Scikit-learn", "Decision Trees", "Random Forest", "Neural Networks", "Feature Engineering", "Model Evaluation"] },
+  { group: "Predictive Analytics", items: ["Time Series Forecasting", "Demand Forecasting", "Predictive Modeling", "Inventory Optimization"] },
+];
+
+function Highlighted({ text }: { text: string }) {
+  const parts = text.split(/\[\[(.+?)\]\]/g);
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="font-semibold text-foreground">{part}</strong>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </>
+  );
+}
+
+function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="max-w-2xl">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h2>
+    </div>
+  );
+}
+
+function Home() {
+  const [sent, setSent] = useState(false);
+  const [codeViewerOpen, setCodeViewerOpen] = useState(false);
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
 
   return (
     <div className="min-h-screen">
       <SiteNav />
       <main>
+        {/* Hero */}
         <section className="border-b border-border">
-          <div className="container-page grid items-start gap-12 py-16 sm:py-24 lg:grid-cols-[1.35fr_1fr]">
+          <div className="container-page grid items-start gap-8 py-16 sm:py-24 lg:grid-cols-[1.35fr_1fr] lg:gap-10 lg:py-8 xl:py-12">
             <div>
-              <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">{site.name}</h1>
-              <p className="mt-3 text-2xl font-medium tracking-tight text-primary sm:text-3xl">Data Analyst</p>
-              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">M.S. in Business Analytics graduate and Data Analyst with 4+ years of experience in pharmaceutical distribution and supply chain operations. I combine business expertise with data analytics to uncover insights, improve processes, and support smarter decisions. My work includes demand forecasting, inventory optimization, business intelligence, dashboard development, and predictive analytics using Python, SQL, Tableau, Power BI, and R. I turn complex data into practical insights that drive measurable business impact.</p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link to="/" hash="projects" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">View Projects <ArrowRight className="size-4" /></Link>
-                <a href={site.resumeUrl} download className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-accent"><Download className="size-4" /> Download Resume</a>
+              <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl lg:text-5xl xl:text-6xl">{site.name}</h1>
+              <p className="mt-3 text-2xl font-medium tracking-tight text-primary sm:text-3xl lg:mt-2 lg:text-2xl xl:text-3xl">Data Analyst</p>
+              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base lg:mt-4 lg:text-[14.5px] xl:text-base">
+                M.S. in Business Analytics graduate and Data Analyst with 4+ years of experience in pharmaceutical distribution and supply chain operations. I combine business expertise with data analytics to uncover insights, improve processes, and support smarter decisions. My work includes demand forecasting, inventory optimization, business intelligence, dashboard development, and predictive analytics using Python, SQL, Tableau, Power BI, and R. I turn complex data into practical insights that drive measurable business impact.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3 lg:mt-5">
+                <Link to="/" hash="projects" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
+                  View Projects <ArrowRight className="size-4" />
+                </Link>
+                <a href={site.resumeUrl} download className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium transition-colors hover:bg-accent">
+                  <Download className="size-4" /> Download Resume
+                </a>
               </div>
             </div>
-            <div className="justify-self-center lg:justify-self-end lg:-mt-6 lg:translate-x-16">
-              <div className="w-[28rem] max-w-full rounded-3xl border border-border bg-card p-5 shadow-lg sm:p-6">
+
+            <div className="justify-self-center lg:justify-self-end lg:mr-8 xl:mr-12 lg:-mt-2.5">
+              <div className="w-64 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-80 sm:p-6 lg:w-[260px] xl:w-[285px] lg:p-3.5 xl:p-4.5">
                 <ProfileHeadshot name={site.name} />
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-border bg-surface p-3.5"><p className="text-xs text-muted-foreground">Education</p><p className="mt-2 text-sm font-semibold leading-snug text-foreground">M.S. Business Analytics</p><p className="mt-2 text-xs text-primary">CSU Sacramento</p></div>
-                  <div className="rounded-xl border border-border bg-surface p-3.5"><p className="text-xs text-muted-foreground">Expertise</p><p className="mt-2 text-sm font-semibold leading-snug text-foreground">Data Analytics &amp; Machine Learning</p></div>
+                <div className="mt-6 grid grid-cols-2 gap-3 lg:mt-3 lg:gap-2 xl:mt-4 xl:gap-2.5">
+                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                    <p className="text-xs text-muted-foreground">Education</p>
+                    <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">M.S. Business Analytics</p>
+                    <p className="mt-2 text-xs text-primary lg:mt-0.5 lg:text-[11px] xl:text-xs">CSU Sacramento</p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                    <p className="text-xs text-muted-foreground">Expertise</p>
+                    <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">Data Analytics &amp; Machine Learning</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section id="projects" className="border-b border-border bg-surface"><div className="container-page py-16 sm:py-24"><div className="flex flex-col gap-2"><p className="eyebrow">Projects</p><h2 className="text-3xl font-semibold tracking-tight">Selected analytics work</h2></div><div className="mt-10 grid gap-6 lg:grid-cols-3">{projects.map((project) => (<button key={project.slug} type="button" onClick={() => setSelectedProjectSlug(project.slug)} className="text-left"><article className="card-surface h-full overflow-hidden transition-transform hover:-translate-y-1"><div className="aspect-[16/10] bg-muted/40 p-4"><div className="flex h-full items-center justify-center rounded-lg border border-border bg-card text-sm text-muted-foreground">{project.title}</div></div><div className="p-5"><p className="text-xs font-medium uppercase tracking-wider text-primary">{project.category}</p><h3 className="mt-2 text-lg font-semibold">{project.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{project.description}</p></div></article></button>))}</div><div className="mt-10"><ProjectDetailView project={projects.find((p) => p.slug === selectedProjectSlug) ?? projects[0]} /></div></div></section>
-        <section id="experience" className="border-b border-border"><div className="container-page py-16 sm:py-24"><p className="eyebrow">Experience</p><div className="mt-8 grid gap-8 lg:grid-cols-[0.75fr_1.25fr]"><div><h2 className="text-3xl font-semibold tracking-tight">Operations + analytics</h2><p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">I bring hands-on operational context to analytics work, translating business needs into measurable models, dashboards, and process improvements.</p></div><div className="card-surface p-6"><div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between"><h3 className="text-lg font-semibold">Operations Manager · Jawed Traders</h3><span className="text-sm text-muted-foreground">2020 — Present</span></div><ul className="mt-5 space-y-3 text-sm leading-relaxed text-muted-foreground"><li>Implemented demand forecasting and safety-stock models in Python, reducing stockouts by 30%.</li><li>Built KPI dashboards in Tableau to improve visibility into sales, inventory, and fulfillment.</li><li>Improved operational workflows and reduced lead time by 25% through data-driven process changes.</li></ul></div></div></div></section>
-        <section id="education" className="border-b border-border bg-surface"><div className="container-page py-16 sm:py-24"><p className="eyebrow">Education</p><div className="mt-8 grid gap-6 sm:grid-cols-2"><div className="card-surface p-6"><p className="text-sm font-medium text-primary">2025</p><h3 className="mt-2 text-xl font-semibold">M.S. Business Analytics</h3><p className="mt-1 text-sm text-muted-foreground">California State University, Sacramento</p></div><div className="card-surface p-6"><p className="text-sm font-medium text-primary">2021</p><h3 className="mt-2 text-xl font-semibold">B.B.A. Finance</h3><p className="mt-1 text-sm text-muted-foreground">Institute of Business Administration, Karachi</p></div></div></div></section>
-        <section id="skills" className="border-b border-border"><div className="container-page py-16 sm:py-24"><p className="eyebrow">Skills</p><div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"><div className="card-surface p-6"><h3 className="font-semibold">Data Analytics</h3><p className="mt-2 text-sm text-muted-foreground">Python, SQL, R, Excel, data cleaning, exploratory analysis</p></div><div className="card-surface p-6"><h3 className="font-semibold">Statistical Analysis</h3><p className="mt-2 text-sm text-muted-foreground">Regression, hypothesis testing, statistical modeling, predictive analytics</p></div><div className="card-surface p-6"><h3 className="font-semibold">Machine Learning</h3><p className="mt-2 text-sm text-muted-foreground">Scikit-learn, classification, regression, clustering, model evaluation</p></div><div className="card-surface p-6"><h3 className="font-semibold">Business Intelligence</h3><p className="mt-2 text-sm text-muted-foreground">Tableau, Power BI, dashboard development, KPI reporting</p></div><div className="card-surface p-6"><h3 className="font-semibold">Data Management</h3><p className="mt-2 text-sm text-muted-foreground">SQL Server, ETL, data warehousing, data preparation</p></div><div className="card-surface p-6"><h3 className="font-semibold">Business &amp; Operations</h3><p className="mt-2 text-sm text-muted-foreground">Demand forecasting, inventory optimization, process improvement</p></div></div></div></section>
-        <section id="contact" className="border-b border-border bg-surface"><div className="container-page py-16 sm:py-24"><p className="eyebrow">Contact</p><div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-3xl font-semibold tracking-tight">Let’s connect</h2><p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">I’m open to data analytics opportunities, collaborative projects, and conversations about applying analytics to real business problems.</p></div><a href={`mailto:${site.email}`} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">Email me <ArrowRight className="size-4" /></a></div></div></section>
+
+        {/* Projects */}
+        <section id="projects" className="border-b border-border bg-surface">
+          <div className="container-page py-20">
+            <SectionHeading eyebrow="Projects" title="Selected analytics work" />
+            <p className="mt-4 max-w-2xl text-[15px] text-muted-foreground">Each project has a dedicated case study covering the problem, data, approach, and code.</p>
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((p) => (
+                <article key={p.slug} className="card-surface group flex flex-col overflow-hidden transition-shadow hover:shadow-lift">
+                  <div className="flex aspect-[16/10] flex-col items-center justify-center gap-2 border-b border-border bg-surface">
+                    <ImageIcon className="size-5 text-muted-foreground" />
+                    <p className="px-8 text-center text-[11px] text-muted-foreground">Screenshot placeholder</p>
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <p className="eyebrow">{p.category}</p>
+                    <h3 className="mt-2.5 text-base font-semibold tracking-tight text-balance">{p.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {p.tech.map((t) => <span key={t} className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-muted-foreground">{t}</span>)}
+                    </div>
+                    <div className="mt-6 flex flex-wrap items-center gap-2 pt-1">
+                      <Link to={p.to} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">View Project <ArrowRight className="size-3.5" /></Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedProjectSlug(p.slug);
+                          setCodeViewerOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Code2 className="size-3.5" /> View Code
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Code Viewer Sub-Window Modal */}
+        <CodeViewerModal
+          isOpen={codeViewerOpen}
+          onClose={() => setCodeViewerOpen(false)}
+          initialSlug={selectedProjectSlug}
+        />
+
+        {/* Experience */}
+        <section id="experience" className="border-b border-border">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Experience" title="Professional experience" />
+            <div className="space-y-8">
+              {experience.map((job) => (
+                <div key={job.company} className="card-surface p-6 sm:p-7">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                    <div><h3 className="text-base font-semibold tracking-tight">{job.company}</h3><p className="mt-0.5 text-sm text-primary">{job.role}</p></div>
+                    <div className="text-sm text-muted-foreground sm:text-right"><p>{job.period}</p><p className="text-xs">{job.location}</p></div>
+                  </div>
+                  <ul className="mt-5 space-y-3">
+                    {job.points.map((p) => <li key={p} className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span><Highlighted text={p} /></span></li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Education */}
+        <section id="education" className="border-b border-border">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Education" title="Education" />
+            <div className="space-y-5">
+              <div className="card-surface border-primary/30 p-7">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><h3 className="text-lg font-semibold tracking-tight">California State University, Sacramento</h3><p className="text-sm text-muted-foreground">June 2025</p></div>
+                <p className="mt-1 text-sm font-medium text-primary">M.S. Business Analytics</p>
+                <p className="mt-4 text-sm text-muted-foreground">Specialization: Data Analytics · Machine Learning · Statistical Modeling · Business Intelligence</p>
+              </div>
+              <div className="card-surface p-6">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><h3 className="text-base font-semibold tracking-tight">Institute of Business Administration, Karachi</h3><p className="text-sm text-muted-foreground">June 2021</p></div>
+                <p className="mt-1 text-sm text-muted-foreground">B.B.A.</p><p className="mt-3 text-sm text-muted-foreground">Specialization: Finance</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section id="skills" className="border-b border-border">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Skills" title="Technical skills" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {skills.map((s) => <div key={s.group} className="card-surface p-5"><p className="text-sm font-semibold tracking-tight">{s.group}</p><div className="mt-3 flex flex-wrap gap-1.5">{s.items.map((i) => <span key={i} className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground">{i}</span>)}</div></div>)}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Contact" title="Let's connect." />
+            <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+              <div>
+                <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">I’m open to Data Analyst and Business Analytics opportunities. If you’re hiring or would like to discuss a project, feel free to reach out.</p>
+                <div className="mt-6 space-y-3 text-sm">
+                  <a href={`mailto:${site.email}`} className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Mail className="size-4" />{site.email}</a>
+                  <a href={site.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Linkedin className="size-4" />LinkedIn</a>
+                  {site.phone && <a href={`tel:${site.phone}`} className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Phone className="size-4" />{site.phone}</a>}
+                </div>
+              </div>
+              <form className="card-surface space-y-4 p-6" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+                <div><label htmlFor="name" className="text-sm font-medium">Name</label><input id="name" name="name" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="Your name" /></div>
+                <div><label htmlFor="email" className="text-sm font-medium">Email</label><input id="email" name="email" type="email" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="you@example.com" /></div>
+                <div><label htmlFor="message" className="text-sm font-medium">Message</label><textarea id="message" name="message" required rows={5} className="mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="How can I help?" /></div>
+                <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"><Mail className="size-4" />Send Message</button>
+                {sent && <p className="text-center text-sm text-muted-foreground">Thanks — your message has been noted. This form is currently a front-end demo.</p>}
+              </form>
+            </div>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </div>
