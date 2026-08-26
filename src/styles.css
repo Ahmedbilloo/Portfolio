@@ -105,6 +105,10 @@
   --ring: oklch(0.68 0.15 255);
   --code-bg: oklch(0.155 0.008 260);
   --code-fg: oklch(0.9 0.008 255);
+  --code-keyword: oklch(0.75 0.13 275);
+  --code-string: oklch(0.8 0.12 150);
+  --code-comment: oklch(0.6 0.012 258);
+  --code-number: oklch(0.82 0.11 70);
   --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.3);
   --shadow-lift: 0 8px 30px -12px oklch(0 0 0 / 0.55);
 }
@@ -151,4 +155,45 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
+}
+
+/* Mobile-only hero adjustment: keep the intro text full-width and place a small headshot beside the name. */
+@media (max-width: 767px) {
+  .container-page > div:first-child > h1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .container-page > div:first-child > h1::after {
+    content: "";
+    flex: 0 0 4.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.9rem;
+    background-image: url("/headshot.png");
+    background-size: cover;
+    background-position: center 12%;
+    background-repeat: no-repeat;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .container-page > div:first-child > p:first-of-type {
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .container-page > div:first-child > p:nth-of-type(2) {
+    max-width: none;
+    width: 100%;
+  }
+
+  .container-page > div:nth-child(2) {
+    display: none;
+  }
 }
