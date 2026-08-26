@@ -95,7 +95,7 @@ function Home() {
       <main>
         {/* Hero */}
         <section className="border-b border-border">
-          <div className="container-page grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.35fr_1fr]">
+          <div className="container-page grid items-start gap-12 py-16 sm:py-24 lg:grid-cols-[1.35fr_1fr]">
             <div>
               <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">{site.name}</h1>
               <p className="mt-3 text-2xl font-medium tracking-tight text-primary sm:text-3xl">Data Analyst</p>
@@ -112,10 +112,10 @@ function Home() {
               </div>
             </div>
 
-            <div className="justify-self-center lg:justify-self-center">
+            <div className="justify-self-center lg:justify-self-end lg:mt-2">
               <div className="w-64 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-80 sm:p-6">
                 <ProfileHeadshot name={site.name} />
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="mt-6 grid grid-cols-2 gap-3">
                   <div className="rounded-xl border border-border bg-surface p-3.5">
                     <p className="text-xs text-muted-foreground">Education</p>
                     <p className="mt-2 text-sm font-semibold leading-snug text-foreground">M.S. Business Analytics</p>
