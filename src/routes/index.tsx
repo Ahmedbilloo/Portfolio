@@ -1,12 +1,11 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { ArrowRight, Download } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ProjectDetailView } from "@/components/project-detail-view";
+import { ProfileHeadshot } from "@/components/profile-headshot";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { ProfileHeadshot } from "@/components/profile-headshot";
-import { ProjectDetailView } from "@/components/project-detail-view";
-import { projects } from "@/data/projects";
-import { site } from "@/data/site";
+import { projects, site } from "@/data/site";
 
 export default function Home() {
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
@@ -34,8 +33,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="justify-self-center lg:justify-self-end lg:-mt-2 lg:translate-x-2">
-              <div className="w-80 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-96 sm:p-6">
+            <div className="justify-self-center lg:justify-self-end lg:-mt-4 lg:translate-x-8">
+              <div className="w-96 rounded-3xl border border-border bg-card p-5 shadow-lg sm:p-6">
                 <ProfileHeadshot name={site.name} />
                 <div className="mt-6 grid grid-cols-2 gap-3">
                   <div className="rounded-xl border border-border bg-surface p-3.5">
@@ -131,21 +130,24 @@ export default function Home() {
         <section id="skills" className="border-b border-border">
           <div className="container-page py-16 sm:py-24">
             <p className="eyebrow">Skills</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Tools &amp; capabilities</h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {["Python", "SQL", "Tableau", "Power BI", "R", "Statistical Analysis", "Data Cleaning", "Data Visualization", "Machine Learning", "Predictive Analytics", "Demand Forecasting", "Inventory Optimization"].map((skill) => (
-                <div key={skill} className="card-surface px-5 py-4 text-sm font-medium">{skill}</div>
-              ))}
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="card-surface p-6"><h3 className="font-semibold">Data Analytics</h3><p className="mt-2 text-sm text-muted-foreground">Python, SQL, R, Excel, data cleaning, exploratory analysis</p></div>
+              <div className="card-surface p-6"><h3 className="font-semibold">Statistical Analysis</h3><p className="mt-2 text-sm text-muted-foreground">Regression, hypothesis testing, statistical modeling, predictive analytics</p></div>
+              <div className="card-surface p-6"><h3 className="font-semibold">Machine Learning</h3><p className="mt-2 text-sm text-muted-foreground">Scikit-learn, classification, regression, clustering, model evaluation</p></div>
+              <div className="card-surface p-6"><h3 className="font-semibold">Business Intelligence</h3><p className="mt-2 text-sm text-muted-foreground">Tableau, Power BI, dashboard development, KPI reporting</p></div>
+              <div className="card-surface p-6"><h3 className="font-semibold">Data Management</h3><p className="mt-2 text-sm text-muted-foreground">SQL Server, ETL, data warehousing, data preparation</p></div>
+              <div className="card-surface p-6"><h3 className="font-semibold">Business &amp; Operations</h3><p className="mt-2 text-sm text-muted-foreground">Demand forecasting, inventory optimization, process improvement</p></div>
             </div>
           </div>
         </section>
 
-        {/* Contact */}
-        <section id="contact">
+        <section id="contact" className="border-b border-border bg-surface">
           <div className="container-page py-16 sm:py-24">
             <p className="eyebrow">Contact</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Let’s connect</h2>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">I’m interested in data analytics, business intelligence, and applied machine learning opportunities.</p>
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div><h2 className="text-3xl font-semibold tracking-tight">Let’s connect</h2><p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">I’m open to data analytics opportunities, collaborative projects, and conversations about applying analytics to real business problems.</p></div>
+              <a href={`mailto:${site.email}`} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">Email me <ArrowRight className="size-4" /></a>
+            </div>
           </div>
         </section>
       </main>
