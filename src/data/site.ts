@@ -6,7 +6,7 @@ export const site = {
   phone: "+1 (747) 252-3297",
   linkedin: "https://www.linkedin.com/in/ahmedbilloo",
   github: "https://github.com/ahmedbilloo",
-  resumeUrl: "/Ahmed-Billoo-Resume.pdf",
+  resumeUrl: "/Ahmed%20Billoo%20Resume.pdf",
   domain: "https://ahmedbilloo.com",
 };
 
