@@ -1,4 +1,4 @@
-import { ArrowRight, Download, ImageIcon, Code2 } from "lucide-react";
+import { ArrowRight, Download, Code2 } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ProjectDetailView } from "@/components/project-detail-view";
@@ -7,7 +7,6 @@ import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { SectionHeading } from "@/components/section-heading";
 import { CodeViewerModal } from "@/components/code-viewer-modal";
-import { Highlighted } from "@/components/highlighted";
 import { projects, site } from "@/data/site";
 
 export const Route = createFileRoute("/")({
@@ -22,7 +21,6 @@ export default function Home() {
     <div className="min-h-screen">
       <SiteNav />
       <main>
-        {/* Hero */}
         <section className="border-b border-border">
           <div className="container-page grid items-start gap-8 py-16 sm:py-24 lg:grid-cols-[1.35fr_1fr] lg:gap-10 lg:py-8 xl:py-12">
             <div>
@@ -60,16 +58,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Projects */}
         <section id="projects" className="border-b border-border bg-surface">
           <div className="container-page py-20">
             <SectionHeading eyebrow="Projects" title="Selected analytics work" />
-            <p className="mt-4 max-w-2xl text-[15px] text-muted-foreground">Each project has a dedicated case study covering the problem, data, approach, and code.</p>
+            <p className="mt-4 max-w-2xl text-[15px] text-muted-foreground">A selection of analytics projects using real datasets and practical business problems.</p>
             <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((p) => (
                 <article key={p.slug} className="card-surface group flex flex-col overflow-hidden transition-shadow hover:shadow-lift">
-                  <div className="flex aspect-[16/10] flex-col items-center justify-center gap-2 border-b border-border bg-surface"><ImageIcon className="size-5 text-muted-foreground" /><p className="px-8 text-center text-[11px] text-muted-foreground">Screenshot placeholder</p></div>
-                  <div className="flex flex-1 flex-col p-6"><p className="eyebrow">{p.category}</p><h3 className="mt-2.5 text-base font-semibold tracking-tight text-balance">{p.title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.description}</p><div className="mt-5 flex flex-wrap gap-1.5">{p.tech.map((t) => <span key={t} className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-muted-foreground">{t}</span>)}</div><div className="mt-6 flex flex-wrap items-center gap-2 pt-1"><Link to={p.to} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">View Project <ArrowRight className="size-3.5" /></Link><button type="button" onClick={() => { setSelectedProjectSlug(p.slug); setCodeViewerOpen(true); }} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"><Code2 className="size-3.5" /> View Code</button></div></div>
+                  <div className="aspect-[16/10] overflow-hidden border-b border-border bg-surface">
+                    <img src="/project-screenshot.svg" alt="Analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <p className="eyebrow">{p.category}</p>
+                    <h3 className="mt-2.5 text-base font-semibold tracking-tight text-balance">{p.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
+                    <div className="mt-5 flex flex-wrap gap-1.5">{p.tech.map((t) => <span key={t} className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-muted-foreground">{t}</span>)}</div>
+                    <div className="mt-6 flex flex-wrap items-center gap-2 pt-1">
+                      <Link to={p.to} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">View Project <ArrowRight className="size-3.5" /></Link>
+                      <button type="button" onClick={() => { setSelectedProjectSlug(p.slug); setCodeViewerOpen(true); }} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"><Code2 className="size-3.5" /> View Code</button>
+                    </div>
+                  </div>
                 </article>
               ))}
             </div>
@@ -78,7 +86,6 @@ export default function Home() {
 
         <CodeViewerModal isOpen={codeViewerOpen} onClose={() => setCodeViewerOpen(false)} initialSlug={selectedProjectSlug} />
 
-        {/* Experience */}
         <section id="experience" className="border-b border-border"><div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]"><SectionHeading eyebrow="Experience" title="Professional experience" /><div className="space-y-8"><div className="card-surface p-6 sm:p-7"><div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><div><h3 className="text-base font-semibold tracking-tight">Jawed Traders</h3><p className="mt-0.5 text-sm text-primary">Operations Manager</p></div><div className="text-sm text-muted-foreground sm:text-right"><p>June 2021 – Present</p><p className="text-xs">Karachi, Pakistan</p></div></div><ul className="mt-5 space-y-3"><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Designed and implemented a Python-based demand forecasting model using time series analysis to optimize inventory planning, reducing stockouts by <strong>30%</strong>.</span></li><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Developed an interactive Tableau Business Intelligence dashboard to monitor sales, inventory, lead times, safety stock, and operational KPIs, enabling data-driven procurement decisions.</span></li><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Reduced procurement lead times by <strong>25%</strong> through demand forecasting and data-driven inventory planning.</span></li></ul></div></div></div></section>
       </main>
       <SiteFooter />
