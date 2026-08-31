@@ -1,5 +1,5 @@
 import { ArrowRight, Download, ImageIcon, Code2 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ProjectDetailView } from "@/components/project-detail-view";
 import { ProfileHeadshot } from "@/components/profile-headshot";
@@ -9,6 +9,10 @@ import { SectionHeading } from "@/components/section-heading";
 import { CodeViewerModal } from "@/components/code-viewer-modal";
 import { Highlighted } from "@/components/highlighted";
 import { projects, site } from "@/data/site";
+
+export const Route = createFileRoute("/")({
+  component: Home,
+});
 
 export default function Home() {
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
