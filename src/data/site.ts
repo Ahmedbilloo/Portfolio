@@ -35,7 +35,7 @@ export const projects: ProjectSummary[] = [
     title: "Retail Sales Intelligence & Customer Analytics",
     category: "Business Analytics",
     description:
-      "End-to-end analysis of 541,909 UCI retail transactions to quantify sales performance, customer value, product concentration, seasonality, and market opportunities using Python.",
+      "Analysis of 541,909 UCI retail transactions to quantify sales performance, customer value, product concentration, seasonality, and market opportunities using Python.",
     tech: ["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn"],
   },
   {
