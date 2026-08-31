@@ -30,6 +30,15 @@ export type ProjectSummary = {
 
 export const projects: ProjectSummary[] = [
   {
+    slug: "retail-sales-intelligence",
+    to: "/projects/retail-sales-intelligence",
+    title: "Retail Sales Intelligence & Customer Analytics",
+    category: "Business Analytics",
+    description:
+      "End-to-end analysis of 541,909 UCI retail transactions to quantify sales performance, customer value, product concentration, seasonality, and market opportunities using Python.",
+    tech: ["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn"],
+  },
+  {
     slug: "business-intelligence-forecasting",
     to: "/projects/business-intelligence-forecasting",
     title: "Business Intelligence & Forecasting Platform",
