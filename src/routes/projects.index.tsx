@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Code2, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Code2 } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { CodeViewerModal } from "@/components/code-viewer-modal";
@@ -9,7 +9,7 @@ import { projectDetails } from "@/data/project-details";
 
 const TITLE = "Analytics & Machine Learning Projects — Ahmed Billoo";
 const DESCRIPTION =
-  "Case studies and predictive machine learning models in business intelligence, credit risk scoring, and clinical disease diagnosis.";
+  "End-to-end case studies spanning retail analytics, demand forecasting, credit risk scoring, and healthcare predictive analytics.";
 
 export const Route = createFileRoute("/projects/")({
   head: () => ({
@@ -45,7 +45,7 @@ function ProjectsIndexPage() {
               Featured Analytics &amp; ML Projects
             </h1>
             <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
-              End-to-end case studies covering demand forecasting pipelines, credit risk assessment models, and healthcare predictive analytics.
+              End-to-end case studies spanning retail analytics, demand forecasting, credit risk scoring, and healthcare predictive analytics.
             </p>
           </div>
         </header>
@@ -100,16 +100,26 @@ function ProjectsIndexPage() {
                     >
                       View Case Study <ArrowRight className="size-3.5" />
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedSlug(p.slug);
-                        setCodeViewerOpen(true);
-                      }}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <Code2 className="size-3.5" /> View Code
-                    </button>
+                    {p.slug === "retail-sales-intelligence" ? (
+                      <Link
+                        to={p.to}
+                        hash="code"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Code2 className="size-3.5" /> Show Code
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedSlug(p.slug);
+                          setCodeViewerOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <Code2 className="size-3.5" /> View Code
+                      </button>
+                    )}
                   </div>
                 </article>
               );
@@ -118,7 +128,6 @@ function ProjectsIndexPage() {
         </div>
       </main>
 
-      {/* Code Viewer Sub-Window */}
       <CodeViewerModal
         isOpen={codeViewerOpen}
         onClose={() => setCodeViewerOpen(false)}
