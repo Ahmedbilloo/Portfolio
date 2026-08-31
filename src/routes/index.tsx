@@ -66,7 +66,11 @@ export default function Home() {
               {projects.map((p) => (
                 <article key={p.slug} className="card-surface group flex flex-col overflow-hidden transition-shadow hover:shadow-lift">
                   <div className="aspect-[16/10] overflow-hidden border-b border-border bg-surface">
-                    <img src="/project-screenshot.svg" alt="Analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
+                    {p.slug === "retail-sales-intelligence" ? (
+                      <img src="/retail-sales-dashboard.svg" alt="Retail sales analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
+                    ) : (
+                      <img src="/project-screenshot.svg" alt="Analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <p className="eyebrow">{p.category}</p>
