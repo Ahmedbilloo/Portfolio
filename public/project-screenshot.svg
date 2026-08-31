@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Analytics dashboard preview</title>
+  <desc id="desc">A clean business analytics dashboard with sales, trend, category and customer charts.</desc>
+  <rect width="1600" height="1000" fill="#f8fafc"/>
+  <rect x="70" y="55" width="1460" height="890" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="70" y="55" width="1460" height="92" rx="20" fill="#0f172a"/>
+  <text x="120" y="112" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Analytics Dashboard</text>
+  <text x="1260" y="112" font-family="Arial, sans-serif" font-size="18" fill="#cbd5e1">Overview</text>
+  <rect x="120" y="185" width="315" height="145" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="465" y="185" width="315" height="145" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="810" y="185" width="315" height="145" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="1155" y="185" width="315" height="145" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <g font-family="Arial, sans-serif">
+    <text x="145" y="225" font-size="17" fill="#64748b">Total Sales</text><text x="145" y="275" font-size="32" font-weight="700" fill="#0f172a">$248.6K</text><text x="145" y="304" font-size="15" fill="#64748b">vs. previous period</text>
+    <text x="490" y="225" font-size="17" fill="#64748b">Orders</text><text x="490" y="275" font-size="32" font-weight="700" fill="#0f172a">12,842</text><text x="490" y="304" font-size="15" fill="#64748b">completed orders</text>
+    <text x="835" y="225" font-size="17" fill="#64748b">Customers</text><text x="835" y="275" font-size="32" font-weight="700" fill="#0f172a">4,216</text><text x="835" y="304" font-size="15" fill="#64748b">active customers</text>
+    <text x="1180" y="225" font-size="17" fill="#64748b">Avg. Order</text><text x="1180" y="275" font-size="32" font-weight="700" fill="#0f172a">$19.36</text><text x="1180" y="304" font-size="15" fill="#64748b">per transaction</text>
+  </g>
+  <rect x="120" y="360" width="880" height="500" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="155" y="405" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0f172a">Sales Trend</text>
+  <text x="155" y="432" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Monthly performance</text>
+  <line x1="165" y1="785" x2="950" y2="785" stroke="#cbd5e1"/>
+  <line x1="165" y1="480" x2="165" y2="785" stroke="#cbd5e1"/>
+  <polyline points="175,735 260,700 345,718 430,625 515,650 600,570 685,595 770,520 855,545 940,485" fill="none" stroke="#334155" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#334155"><circle cx="175" cy="735" r="6"/><circle cx="260" cy="700" r="6"/><circle cx="345" cy="718" r="6"/><circle cx="430" cy="625" r="6"/><circle cx="515" cy="650" r="6"/><circle cx="600" cy="570" r="6"/><circle cx="685" cy="595" r="6"/><circle cx="770" cy="520" r="6"/><circle cx="855" cy="545" r="6"/><circle cx="940" cy="485" r="6"/></g>
+  <g font-family="Arial, sans-serif" font-size="13" fill="#94a3b8"><text x="170" y="815">Jan</text><text x="255" y="815">Feb</text><text x="340" y="815">Mar</text><text x="425" y="815">Apr</text><text x="510" y="815">May</text><text x="595" y="815">Jun</text><text x="680" y="815">Jul</text><text x="765" y="815">Aug</text><text x="850" y="815">Sep</text><text x="935" y="815">Oct</text></g>
+  <rect x="1030" y="360" width="440" height="240" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="1065" y="405" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0f172a">Top Categories</text>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#475569"><text x="1065" y="455">Electronics</text><text x="1065" y="505">Home &amp; Garden</text><text x="1065" y="555">Clothing</text></g>
+  <rect x="1210" y="440" width="210" height="18" rx="9" fill="#e2e8f0"/><rect x="1210" y="490" width="175" height="18" rx="9" fill="#cbd5e1"/><rect x="1210" y="540" width="140" height="18" rx="9" fill="#94a3b8"/>
+  <rect x="1030" y="620" width="440" height="240" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="1065" y="665" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0f172a">Customer Mix</text>
+  <circle cx="1250" cy="755" r="72" fill="none" stroke="#e2e8f0" stroke-width="34"/>
+  <path d="M1250 683 A72 72 0 0 1 1318 775" fill="none" stroke="#475569" stroke-width="34"/>
+  <path d="M1318 775 A72 72 0 0 1 1195 808" fill="none" stroke="#94a3b8" stroke-width="34"/>
+  <g font-family="Arial, sans-serif" font-size="14" fill="#64748b"><text x="1360" y="735">New 42%</text><text x="1360" y="765">Returning 35%</text><text x="1360" y="795">Other 23%</text></g>
+</svg>
