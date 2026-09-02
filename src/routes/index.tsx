@@ -1,4 +1,4 @@
-import { ArrowRight, Download, Code2 } from "lucide-react";
+import { ArrowRight, Download, Code2, Linkedin, Mail, Phone } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ProjectDetailView } from "@/components/project-detail-view";
@@ -13,9 +13,19 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const skills = [
+  { group: "Programming & Databases", items: ["Python", "R", "SQL", "Microsoft SQL Server"] },
+  { group: "Data Analysis", items: ["Pandas", "NumPy", "Excel", "Data Cleaning", "Exploratory Data Analysis"] },
+  { group: "Statistical Analysis", items: ["Regression Analysis", "Hypothesis Testing", "Statistical Modeling", "Forecasting"] },
+  { group: "Data Visualization & BI", items: ["Tableau", "Power BI", "Matplotlib", "ggplot2", "Dashboard Development"] },
+  { group: "Machine Learning", items: ["Scikit-learn", "Decision Trees", "Random Forest", "Neural Networks", "Feature Engineering", "Model Evaluation"] },
+  { group: "Predictive Analytics", items: ["Time Series Forecasting", "Demand Forecasting", "Predictive Modeling", "Inventory Optimization"] },
+];
+
 export default function Home() {
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
   const [codeViewerOpen, setCodeViewerOpen] = useState(false);
+  const [sent, setSent] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -43,12 +53,12 @@ export default function Home() {
               <div className="w-72 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-80 sm:p-6 lg:w-[260px] xl:w-[285px] lg:p-3.5 xl:p-4.5">
                 <ProfileHeadshot name={site.name} />
                 <div className="mt-6 grid grid-cols-2 gap-3 lg:mt-3 lg:gap-2 xl:mt-4 xl:gap-2.5">
-                  <div id="education" className="scroll-mt-20 rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
                     <p className="text-xs text-muted-foreground">Education</p>
                     <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">M.S. Business Analytics</p>
                     <p className="mt-2 text-xs text-primary lg:mt-0.5 lg:text-[11px] xl:text-xs">CSU Sacramento</p>
                   </div>
-                  <div id="skills" className="scroll-mt-20 rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
                     <p className="text-xs text-muted-foreground">Expertise</p>
                     <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">Data Analytics &amp; Machine Learning</p>
                   </div>
@@ -91,6 +101,55 @@ export default function Home() {
         <CodeViewerModal isOpen={codeViewerOpen} onClose={() => setCodeViewerOpen(false)} initialSlug={selectedProjectSlug} />
 
         <section id="experience" className="border-b border-border"><div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]"><SectionHeading eyebrow="Experience" title="Professional experience" /><div className="space-y-8"><div className="card-surface p-6 sm:p-7"><div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><div><h3 className="text-base font-semibold tracking-tight">Jawed Traders</h3><p className="mt-0.5 text-sm text-primary">Operations Manager</p></div><div className="text-sm text-muted-foreground sm:text-right"><p>June 2021 – Present</p><p className="text-xs">Karachi, Pakistan</p></div></div><ul className="mt-5 space-y-3"><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Designed and implemented a Python-based demand forecasting model using time series analysis to optimize inventory planning, reducing stockouts by <strong>30%</strong>.</span></li><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Developed an interactive Tableau Business Intelligence dashboard to monitor sales, inventory, lead times, safety stock, and operational KPIs, enabling data-driven procurement decisions.</span></li><li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" /><span>Reduced procurement lead times by <strong>25%</strong> through demand forecasting and data-driven inventory planning.</span></li></ul></div></div></div></section>
+
+        <section id="education" className="scroll-mt-20 border-b border-border">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Education" title="Education" />
+            <div className="space-y-5">
+              <div className="card-surface border-primary/30 p-7">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><h3 className="text-lg font-semibold tracking-tight">California State University, Sacramento</h3><p className="text-sm text-muted-foreground">June 2025</p></div>
+                <p className="mt-1 text-sm font-medium text-primary">M.S. Business Analytics</p>
+                <p className="mt-4 text-sm text-muted-foreground">Specialization: Data Analytics · Machine Learning · Statistical Modeling · Business Intelligence</p>
+              </div>
+              <div className="card-surface p-6">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"><h3 className="text-base font-semibold tracking-tight">Institute of Business Administration, Karachi</h3><p className="text-sm text-muted-foreground">June 2021</p></div>
+                <p className="mt-1 text-sm text-muted-foreground">B.B.A.</p><p className="mt-3 text-sm text-muted-foreground">Specialization: Finance</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="skills" className="scroll-mt-20 border-b border-border">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Skills" title="Technical skills" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {skills.map((s) => <div key={s.group} className="card-surface p-5"><p className="text-sm font-semibold tracking-tight">{s.group}</p><div className="mt-3 flex flex-wrap gap-1.5">{s.items.map((i) => <span key={i} className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground">{i}</span>)}</div></div>)}
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="scroll-mt-20">
+          <div className="container-page grid gap-10 py-16 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <SectionHeading eyebrow="Contact" title="Let's connect." />
+            <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+              <div>
+                <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">I’m open to Data Analyst and Business Analytics opportunities. If you’re hiring or would like to discuss a project, feel free to reach out.</p>
+                <div className="mt-6 space-y-3 text-sm">
+                  <a href={`mailto:${site.email}`} className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Mail className="size-4" />{site.email}</a>
+                  <a href={site.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Linkedin className="size-4" />LinkedIn</a>
+                  {site.phone && <a href={`tel:${site.phone}`} className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Phone className="size-4" />{site.phone}</a>}
+                </div>
+              </div>
+              <form className="card-surface space-y-4 p-6" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+                <div><label htmlFor="name" className="text-sm font-medium">Name</label><input id="name" name="name" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="Your name" /></div>
+                <div><label htmlFor="email" className="text-sm font-medium">Email</label><input id="email" name="email" type="email" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="you@example.com" /></div>
+                <div><label htmlFor="message" className="text-sm font-medium">Message</label><textarea id="message" name="message" required rows={5} className="mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="Your message" /></div>
+                <button type="submit" className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">Send Message</button>
+                {sent && <p className="text-sm text-muted-foreground">Thanks for reaching out. I’ll get back to you soon.</p>}
+              </form>
+            </div>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </div>
