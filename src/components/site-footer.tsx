@@ -2,7 +2,7 @@ import { site } from "@/data/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-surface">
+    <footer id="contact" className="scroll-mt-20 border-t border-border bg-surface">
       <div className="container-page flex flex-col gap-6 py-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[15px] font-semibold tracking-tight">{site.name}</p>
