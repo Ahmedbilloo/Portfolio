@@ -21,7 +21,7 @@ export function SiteNav() {
         <Link to="/" className="text-[15px] font-semibold tracking-tight">{site.name}</Link>
         <div className="hidden items-center gap-1 lg:flex">
           {navLinks.map((l) => (
-            <Link key={l.hash} to="/" hash={l.hash} className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</Link>
+            <a key={l.hash} href={`/#${l.hash}`} className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</a>
           ))}
         </div>
         <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function SiteNav() {
         <div className="border-t border-border bg-background lg:hidden">
           <div className="container-page flex flex-col py-3">
             {navLinks.map((l) => (
-              <Link key={l.hash} to="/" hash={l.hash} onClick={() => setOpen(false)} className="rounded-md px-2 py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</Link>
+              <a key={l.hash} href={`/#${l.hash}`} onClick={() => setOpen(false)} className="rounded-md px-2 py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</a>
             ))}
             <a href={site.resumeUrl} download className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground">
               <Download className="size-4" /> Download Resume
