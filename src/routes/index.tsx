@@ -26,6 +26,8 @@ export default function Home() {
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
   const [codeViewerOpen, setCodeViewerOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [contactError, setContactError] = useState("");
 
   return (
     <div className="min-h-screen">
@@ -140,12 +142,42 @@ export default function Home() {
                   {site.phone && <a href={`tel:${site.phone}`} className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"><Phone className="size-4" />{site.phone}</a>}
                 </div>
               </div>
-              <form className="card-surface space-y-4 p-6" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+              <form
+                className="card-surface space-y-4 p-6"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  setSending(true);
+                  setContactError("");
+                  setSent(false);
+
+                  try {
+                    const response = await fetch("/api/contact", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+                    });
+
+                    if (!response.ok) {
+                      const result = await response.json().catch(() => ({}));
+                      throw new Error(result.error || "Unable to send your message.");
+                    }
+
+                    form.reset();
+                    setSent(true);
+                  } catch (error) {
+                    setContactError(error instanceof Error ? error.message : "Unable to send your message.");
+                  } finally {
+                    setSending(false);
+                  }
+                }}
+              >
                 <div><label htmlFor="name" className="text-sm font-medium">Name</label><input id="name" name="name" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="Your name" /></div>
                 <div><label htmlFor="email" className="text-sm font-medium">Email</label><input id="email" name="email" type="email" required className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="you@example.com" /></div>
                 <div><label htmlFor="message" className="text-sm font-medium">Message</label><textarea id="message" name="message" required rows={5} className="mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary" placeholder="Your message" /></div>
-                <button type="submit" className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">Send Message</button>
+                <button type="submit" disabled={sending} className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">{sending ? "Sending..." : "Send Message"}</button>
                 {sent && <p className="text-sm text-muted-foreground">Thanks for reaching out. I’ll get back to you soon.</p>}
+                {contactError && <p className="text-sm text-destructive">{contactError}</p>}
               </form>
             </div>
           </div>
