@@ -43,12 +43,12 @@ export default function Home() {
               <div className="w-72 rounded-3xl border border-border bg-card p-5 shadow-lg sm:w-80 sm:p-6 lg:w-[260px] xl:w-[285px] lg:p-3.5 xl:p-4.5">
                 <ProfileHeadshot name={site.name} />
                 <div className="mt-6 grid grid-cols-2 gap-3 lg:mt-3 lg:gap-2 xl:mt-4 xl:gap-2.5">
-                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                  <div id="education" className="scroll-mt-20 rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
                     <p className="text-xs text-muted-foreground">Education</p>
                     <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">M.S. Business Analytics</p>
                     <p className="mt-2 text-xs text-primary lg:mt-0.5 lg:text-[11px] xl:text-xs">CSU Sacramento</p>
                   </div>
-                  <div className="rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
+                  <div id="skills" className="scroll-mt-20 rounded-xl border border-border bg-surface p-3.5 lg:p-2.5 xl:p-3">
                     <p className="text-xs text-muted-foreground">Expertise</p>
                     <p className="mt-2 text-sm font-semibold leading-snug text-foreground lg:mt-1 lg:text-xs xl:text-[13px]">Data Analytics &amp; Machine Learning</p>
                   </div>
