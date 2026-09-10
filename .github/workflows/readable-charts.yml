@@ -1,7 +1,8 @@
 name: Improve chart readability
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: write
