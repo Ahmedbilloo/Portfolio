@@ -40,44 +40,44 @@ function BarList({ data, percent=false }: {data: readonly (readonly [string,numb
   const max = Math.max(...data.map(x=>x[1]));
   return <div className="space-y-4">{data.map((x,i)=><div key={x[0]}><div className="mb-1 flex justify-between gap-3 text-xs"><span className="font-medium">{i+1}. {x[0]}</span><span className="font-semibold text-primary">{percent ? `${x[1].toFixed(2)}%` : gbp(x[1])}</span></div><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${x[1]/max*100}%`}} /></div></div>)}</div>;
 }
-function ChartBox({title,description,children}:{title:string;description:string;children:React.ReactNode}) { return <div className="card-surface p-7"><h3 className="text-lg font-bold tracking-tight">{title}</h3><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{description}</p><div className="mt-5 h-80 w-full">{children}</div></div>; }
+function ChartBox({title,description,children}:{title:string;description:string;children:React.ReactNode}) { return <div className="card-surface p-7"><h3 className="text-lg font-bold tracking-tight">{title}</h3><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{description}</p><div className="mt-5 h-88 w-full">{children}</div></div>; }
 function StaticLine({values,labels,formatter,yLabel}:{values:number[];labels:string[];formatter:(v:number)=>string;yLabel:string}) {
-  const min=Math.min(...values), max=Math.max(...values), range=max-min||1, w=920, h=290, left=72, right=20, top=25, bottom=62;
+  const min=Math.min(...values), max=Math.max(...values), range=max-min||1, w=920, h=330, left=82, right=20, top=25, bottom=78;
   const px=(i:number)=>left+i/(values.length-1)*(w-left-right); const py=(v:number)=>h-bottom-(v-min)/range*(h-top-bottom);
   const points=values.map((v,i)=>`${px(i)},${py(v)}`).join(" ");
   const ticks=[0,0.25,0.5,0.75,1].map(t=>min+t*range);
   return <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full" role="img" aria-label={`${yLabel} over time`}>
-    {ticks.map((v,i)=><g key={i}><line x1={left} y1={py(v)} x2={w-right} y2={py(v)} stroke="currentColor" opacity=".1"/><text x={left-9} y={py(v)+4} textAnchor="end" fontSize="10" fill="currentColor" opacity=".65">{formatter(v)}</text></g>)}
+    {ticks.map((v,i)=><g key={i}><line x1={left} y1={py(v)} x2={w-right} y2={py(v)} stroke="currentColor" opacity=".1"/><text x={left-9} y={py(v)+4} textAnchor="end" fontSize="13" fill="currentColor" opacity=".65">{formatter(v)}</text></g>)}
     <line x1={left} y1={top} x2={left} y2={h-bottom} stroke="currentColor" opacity=".2"/><line x1={left} y1={h-bottom} x2={w-right} y2={h-bottom} stroke="currentColor" opacity=".2"/>
     <polyline points={points} fill="none" stroke="currentColor" strokeWidth="3"/>
     {values.map((v,i)=><circle key={i} cx={px(i)} cy={py(v)} r="3" fill="currentColor"/>) }
-    {labels.map((label,i)=><text key={label} x={px(i)} y={h-bottom+17} textAnchor="middle" fontSize="9" fill="currentColor" opacity=".7" transform={`rotate(-38 ${px(i)} ${h-bottom+17})`}>{label}</text>)}
-    <text x="15" y="16" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
-    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7">Month</text>
+    {labels.map((label,i)=><text key={label} x={px(i)} y={h-bottom+17} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${px(i)} ${h-bottom+17})`}>{label}</text>)}
+    <text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
+    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7">Month</text>
   </svg>;
 }
 function StaticBars({values, labels, formatter, yLabel, xLabel}:{values:number[];labels:string[];formatter:(v:number)=>string;yLabel:string;xLabel:string}) {
-  const max=Math.max(...values), w=920, h=290, left=72, right=20, top=25, bottom=62, plotH=h-top-bottom, plotW=w-left-right;
+  const max=Math.max(...values), w=920, h=330, left=82, right=20, top=25, bottom=78, plotH=h-top-bottom, plotW=w-left-right;
   const barW=Math.min(46, plotW/values.length*0.62);
   return <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full" role="img" aria-label={`${yLabel} by ${xLabel}`}>
-    {[0,0.25,0.5,0.75,1].map((t,i)=>{const y=h-bottom-t*plotH; const value=t*max; return <g key={i}><line x1={left} y1={y} x2={w-right} y2={y} stroke="currentColor" opacity=".1"/><text x={left-9} y={y+4} textAnchor="end" fontSize="10" fill="currentColor" opacity=".65">{formatter(value)}</text></g>})}
+    {[0,0.25,0.5,0.75,1].map((t,i)=>{const y=h-bottom-t*plotH; const value=t*max; return <g key={i}><line x1={left} y1={y} x2={w-right} y2={y} stroke="currentColor" opacity=".1"/><text x={left-9} y={y+4} textAnchor="end" fontSize="13" fill="currentColor" opacity=".65">{formatter(value)}</text></g>})}
     <line x1={left} y1={top} x2={left} y2={h-bottom} stroke="currentColor" opacity=".2"/><line x1={left} y1={h-bottom} x2={w-right} y2={h-bottom} stroke="currentColor" opacity=".2"/>
-    {values.map((v,i)=>{const x=left+(i+0.5)*plotW/values.length; const barH=v/max*plotH; return <g key={labels[i]}><rect x={x-barW/2} y={h-bottom-barH} width={barW} height={barH} rx="4" fill="currentColor" opacity=".85"/><text x={x} y={h-bottom-barH-7} textAnchor="middle" fontSize="9" fill="currentColor" opacity=".75">{formatter(v)}</text><text x={x} y={h-bottom+17} textAnchor="middle" fontSize="9" fill="currentColor" opacity=".7" transform={`rotate(-38 ${x} ${h-bottom+17})`}>{labels[i]}</text></g>})}
-    <text x="15" y="16" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
-    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7">{xLabel}</text>
+    {values.map((v,i)=>{const x=left+(i+0.5)*plotW/values.length; const barH=v/max*plotH; return <g key={labels[i]}><rect x={x-barW/2} y={h-bottom-barH} width={barW} height={barH} rx="4" fill="currentColor" opacity=".85"/><text x={x} y={h-bottom-barH-7} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".75">{formatter(v)}</text><text x={x} y={h-bottom+17} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${x} ${h-bottom+17})`}>{labels[i]}</text></g>})}
+    <text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
+    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7">{xLabel}</text>
   </svg>;
 }
 function StaticScatter() {
-  const maxX=Math.max(...scatter.map(x=>x[0])), maxY=Math.max(...scatter.map(x=>x[1])), w=920, h=290, left=78, right=20, top=25, bottom=58;
+  const maxX=Math.max(...scatter.map(x=>x[0])), maxY=Math.max(...scatter.map(x=>x[1])), w=920, h=330, left=88, right=20, top=25, bottom=70;
   const x=(v:number)=>left+v/maxX*(w-left-right), y=(v:number)=>h-bottom-v/maxY*(h-top-bottom);
   const xTicks=[0,0.25,0.5,0.75,1], yTicks=[0,0.25,0.5,0.75,1];
   return <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full" role="img" aria-label="Product units sold versus revenue">
-    {yTicks.map((t,i)=><g key={`y-${i}`}><line x1={left} y1={y(t*maxY)} x2={w-right} y2={y(t*maxY)} stroke="currentColor" opacity=".1"/><text x={left-9} y={y(t*maxY)+4} textAnchor="end" fontSize="10" fill="currentColor" opacity=".65">{gbp(t*maxY)}</text></g>)}
-    {xTicks.map((t,i)=><g key={`x-${i}`}><line x1={x(t*maxX)} y1={top} x2={x(t*maxX)} y2={h-bottom} stroke="currentColor" opacity=".07"/><text x={x(t*maxX)} y={h-bottom+17} textAnchor="middle" fontSize="10" fill="currentColor" opacity=".65">{Math.round(t*maxX/1000)}k</text></g>)}
+    {yTicks.map((t,i)=><g key={`y-${i}`}><line x1={left} y1={y(t*maxY)} x2={w-right} y2={y(t*maxY)} stroke="currentColor" opacity=".1"/><text x={left-9} y={y(t*maxY)+4} textAnchor="end" fontSize="13" fill="currentColor" opacity=".65">{gbp(t*maxY)}</text></g>)}
+    {xTicks.map((t,i)=><g key={`x-${i}`}><line x1={x(t*maxX)} y1={top} x2={x(t*maxX)} y2={h-bottom} stroke="currentColor" opacity=".07"/><text x={x(t*maxX)} y={h-bottom+17} textAnchor="middle" fontSize="13" fill="currentColor" opacity=".65">{Math.round(t*maxX/1000)}k</text></g>)}
     <line x1={left} y1={top} x2={left} y2={h-bottom} stroke="currentColor" opacity=".2"/><line x1={left} y1={h-bottom} x2={w-right} y2={h-bottom} stroke="currentColor" opacity=".2"/>
     {scatter.map((p,i)=><circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="currentColor" opacity=".75"/>)}
-    <text x="15" y="16" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">Revenue (£)</text>
-    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="10" fontWeight="600" fill="currentColor" opacity=".7">Units sold</text>
+    <text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">Revenue (£)</text>
+    <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7">Units sold</text>
   </svg>;
 }
 
