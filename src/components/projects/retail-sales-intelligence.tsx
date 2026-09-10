@@ -51,8 +51,8 @@ function StaticLine({values,labels,formatter,yLabel}:{values:number[];labels:str
     <line x1={left} y1={top} x2={left} y2={h-bottom} stroke="currentColor" opacity=".2"/><line x1={left} y1={h-bottom} x2={w-right} y2={h-bottom} stroke="currentColor" opacity=".2"/>
     <polyline points={points} fill="none" stroke="currentColor" strokeWidth="3"/>
     {values.map((v,i)=><circle key={i} cx={px(i)} cy={py(v)} r="3" fill="currentColor"/>) }
-    {labels.map((label,i)=><text key={label} x={px(i)} y={h-bottom+17} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${px(i)} ${h-bottom+17})`}>{label}</text>)}
-    <text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
+    {labels.map((label,i)=><text key={label} x={px(i)} y={h-bottom+17} textAnchor="end" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-45 ${px(i)} ${h-bottom+17})`}>{label}</text>)}
+    <text x="22" y={(top+h-bottom)/2} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform={`rotate(-90 22 ${(top+h-bottom)/2})`}>{yLabel}</text>
     <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7">Month</text>
   </svg>;
 }
@@ -62,8 +62,8 @@ function StaticBars({values, labels, formatter, yLabel, xLabel}:{values:number[]
   return <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full" role="img" aria-label={`${yLabel} by ${xLabel}`}>
     {[0,0.25,0.5,0.75,1].map((t,i)=>{const y=h-bottom-t*plotH; const value=t*max; return <g key={i}><line x1={left} y1={y} x2={w-right} y2={y} stroke="currentColor" opacity=".1"/><text x={left-9} y={y+4} textAnchor="end" fontSize="13" fill="currentColor" opacity=".65">{formatter(value)}</text></g>})}
     <line x1={left} y1={top} x2={left} y2={h-bottom} stroke="currentColor" opacity=".2"/><line x1={left} y1={h-bottom} x2={w-right} y2={h-bottom} stroke="currentColor" opacity=".2"/>
-    {values.map((v,i)=>{const x=left+(i+0.5)*plotW/values.length; const barH=v/max*plotH; return <g key={labels[i]}><rect x={x-barW/2} y={h-bottom-barH} width={barW} height={barH} rx="4" fill="currentColor" opacity=".85"/><text x={x} y={h-bottom-barH-7} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".75">{formatter(v)}</text><text x={x} y={h-bottom+17} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${x} ${h-bottom+17})`}>{labels[i]}</text></g>})}
-    <text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>
+    {values.map((v,i)=>{const x=left+(i+0.5)*plotW/values.length; const barH=v/max*plotH; return <g key={labels[i]}><rect x={x-barW/2} y={h-bottom-barH} width={barW} height={barH} rx="4" fill="currentColor" opacity=".85"/><text x={x} y={h-bottom-barH-7} textAnchor="middle" fontSize="12" fill="currentColor" opacity=".75">{formatter(v)}</text><text x={x} y={h-bottom+17} textAnchor="end" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-45 ${x} ${h-bottom+17})`}>{labels[i]}</text></g>})}
+    <text x="22" y={(top+h-bottom)/2} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform={`rotate(-90 22 ${(top+h-bottom)/2})`}>{yLabel}</text>
     <text x={(left+w-right)/2} y={h-4} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7">{xLabel}</text>
   </svg>;
 }
