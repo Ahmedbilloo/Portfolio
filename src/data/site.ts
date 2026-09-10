@@ -39,6 +39,15 @@ export const projects: ProjectSummary[] = [
     tech: ["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn"],
   },
   {
+    slug: "customer-churn-prediction",
+    to: "/projects/customer-churn-prediction",
+    title: "Customer Churn Prediction & Retention Analytics",
+    category: "Machine Learning",
+    description:
+      "Built customer-level churn prediction models from UCI Online Retail transaction history to identify customers likely to become inactive and understand the behaviors associated with churn.",
+    tech: ["Python", "Pandas", "Scikit-learn", "Machine Learning"],
+  },
+  {
     slug: "business-intelligence-forecasting",
     to: "/projects/business-intelligence-forecasting",
     title: "Business Intelligence & Forecasting Platform",
