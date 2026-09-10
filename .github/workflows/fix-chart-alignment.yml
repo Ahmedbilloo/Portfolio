@@ -1,0 +1,32 @@
+name: Fix chart label alignment
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Align chart labels
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/projects/retail-sales-intelligence.tsx')
+          s = p.read_text()
+          s = s.replace('textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${px(i)} ${h-bottom+17})`}', 'textAnchor="end" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-45 ${px(i)} ${h-bottom+17})`}')
+          s = s.replace('textAnchor="middle" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-38 ${x} ${h-bottom+17})`}', 'textAnchor="end" fontSize="12" fill="currentColor" opacity=".7" transform={`rotate(-45 ${x} ${h-bottom+17})`}')
+          s = s.replace('<text x="15" y="16" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform="rotate(-90 15 16)">{yLabel}</text>', '<text x="22" y={(top+h-bottom)/2} textAnchor="middle" fontSize="13" fontWeight="600" fill="currentColor" opacity=".7" transform={`rotate(-90 22 ${(top+h-bottom)/2})`}>{yLabel}</text>')
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/projects/retail-sales-intelligence.tsx
+          git diff --cached --quiet || git commit -m "Fix retail chart label alignment"
+          git push
