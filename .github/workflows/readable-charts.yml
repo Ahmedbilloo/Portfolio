@@ -1,0 +1,33 @@
+name: Improve chart readability
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-charts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Increase chart typography
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/projects/retail-sales-intelligence.tsx')
+          s = p.read_text()
+          s = s.replace('className="mt-5 h-80 w-full"', 'className="mt-5 h-88 w-full"')
+          s = s.replace('w=920, h=290, left=72, right=20, top=25, bottom=62', 'w=920, h=330, left=82, right=20, top=25, bottom=78')
+          s = s.replace('w=920, h=290, left=78, right=20, top=25, bottom=58', 'w=920, h=330, left=88, right=20, top=25, bottom=70')
+          s = s.replace('fontSize="10"', 'fontSize="13"')
+          s = s.replace('fontSize="9"', 'fontSize="12"')
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/projects/retail-sales-intelligence.tsx
+          git diff --cached --quiet || git commit -m "Improve retail chart readability"
+          git push
