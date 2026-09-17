@@ -44,10 +44,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.metrics import (
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics (
     accuracy_score, precision_score, recall_score,
     f1_score, roc_auc_score, classification_report,
     ConfusionMatrixDisplay
@@ -68,11 +69,10 @@ data.head()`
   },
   {
     title: "02 · Data Quality",
-    description: "Inspect structure, missing values, duplicates, descriptive statistics, and the churn target distribution before modeling.",
+    description: "Inspect the dataset structure, missing values, duplicates, descriptive statistics, and the target distribution.",
     code: `data.info()
 
 data.isna().sum()
-
 data.describe(include="all").T
 
 print("Duplicate rows:", data.duplicated().sum())
@@ -95,7 +95,7 @@ plt.show()`
   },
   {
     title: "03 · Exploratory Analysis",
-    description: "Create tenure and listening features, compare behavior across churn status, and examine churn rates by customer segment.",
+    description: "Create derived variables, compare numeric behavior by churn status, and calculate churn rates for subscription and service segments.",
     code: `data["TenureDays"] = -data["signup_date"]
 data["SongsPerHour"] = (
     data["weekly_songs_played"] /
@@ -112,33 +112,52 @@ summary = data.groupby("churned")[numeric_analysis].mean().T
 summary.columns = ["Active", "Churned"]
 summary
 
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+data.boxplot(column="weekly_hours", by="churned", ax=axes[0])
+axes[0].set_title("Weekly Listening Hours by Churn")
+axes[0].set_xlabel("Churned")
+axes[0].set_ylabel("Weekly Hours")
+
+data.boxplot(column="song_skip_rate", by="churned", ax=axes[1])
+axes[1].set_title("Song Skip Rate by Churn")
+axes[1].set_xlabel("Churned")
+axes[1].set_ylabel("Skip Rate")
+
+plt.suptitle("")
+plt.tight_layout()
+plt.show()
+
 subscription_churn = pd.crosstab(
-    data["subscription_type"],
-    data["churned"],
-    normalize="index"
+    data["subscription_type"], data["churned"], normalize="index"
 ) * 100
 subscription_churn.columns = ["Active %", "Churned %"]
 subscription_churn.sort_values("Churned %", ascending=False)
 
+plan_churn = pd.crosstab(
+    data["payment_plan"], data["churned"], normalize="index"
+) * 100
+plan_churn.columns = ["Active %", "Churned %"]
+plan_churn
+
 inquiry_churn = pd.crosstab(
-    data["customer_service_inquiries"],
-    data["churned"],
-    normalize="index"
+    data["customer_service_inquiries"], data["churned"], normalize="index"
 ).mul(100)
 inquiry_churn.columns = ["Active %", "Churned %"]
-inquiry_churn.sort_values("Churned %", ascending=False)`
+inquiry_churn.sort_values("Churned %", ascending=False)
+
+categorical_features = data.select_dtypes(include="object").columns.tolist()
+numeric_features = data.select_dtypes(exclude="object").columns.tolist()
+
+corr = data[numeric_features].corr()
+plt.figure(figsize=(12, 8))
+sns.heatmap(corr, cmap="coolwarm", center=0)
+plt.title("Feature Correlation Matrix")
+plt.show()`
   },
   {
-    title: "04 · Feature Selection",
-    description: "Start with the full set of candidate predictors, inspect feature importance, then reduce the original variables before dummy encoding.",
-    code: `categorical_features = data.select_dtypes(
-    include="object"
-).columns.tolist()
-numeric_features = data.select_dtypes(
-    exclude="object"
-).columns.tolist()
-
-features = [
+    title: "04 · Initial Feature Review",
+    description: "Start with the full candidate feature set, encode the categorical variables, fit a tuned Decision Tree, and inspect feature importance before reducing the original variables.",
+    code: `features = [
     "age", "location", "subscription_type", "payment_plan",
     "num_subscription_pauses", "payment_method",
     "customer_service_inquiries", "weekly_hours",
@@ -153,25 +172,56 @@ X = data[features]
 y = data["churned"]
 
 X = pd.get_dummies(
-    X,
-    columns=categorical_features,
-    drop_first=True,
-    dtype=int
+    X, columns=categorical_features, drop_first=True, dtype=int
 )
 
-# Final predictors selected at the original-variable level
-features_final = [
-    "age", "subscription_type", "num_subscription_pauses",
-    "customer_service_inquiries", "weekly_hours",
-    "song_skip_rate", "weekly_unique_songs",
-    "notifications_clicked", "TenureDays"
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.20, random_state=1, stratify=y
+)
+
+param_grid = {
+    "max_depth": [5, 10, 20, 30],
+    "min_samples_split": [20, 40, 60, 80, 100],
+    "min_impurity_decrease": [0, 0.0005, 0.001, 0.005, 0.01],
+}
+
+gridSearch = GridSearchCV(
+    DecisionTreeClassifier(criterion="gini"),
+    param_grid, cv=3, n_jobs=-1, verbose=3
+)
+gridSearch.fit(train_X, train_y)
+
+bestClassTree = gridSearch.best_estimator_
+
+tree_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": bestClassTree.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+tree_importance`
+  },
+  {
+    title: "05 · Final Feature Set",
+    description: "Reduce the original variables based on the initial feature review, then rebuild the encoded dataset and stratified train-test split.",
+    code: `features_final = [
+    "age",
+    "subscription_type",
+    "num_subscription_pauses",
+    "customer_service_inquiries",
+    "weekly_hours",
+    "song_skip_rate",
+    "weekly_unique_songs",
+    "notifications_clicked",
+    "TenureDays",
 ]
 
 categorical_features = data[features_final].select_dtypes(
     include="object"
 ).columns.tolist()
+
+X = data[features_final]
 X = pd.get_dummies(
-    data[features_final],
+    X,
     columns=categorical_features,
     drop_first=True,
     dtype=int
@@ -187,8 +237,8 @@ train_X, test_X, train_y, test_y = train_test_split(
 )`
   },
   {
-    title: "05 · Decision Tree",
-    description: "Tune the Decision Tree with three-fold cross-validation using accuracy as the scoring measure, then evaluate it on the held-out test set.",
+    title: "06 · Decision Tree",
+    description: "Tune the final Decision Tree with three-fold cross-validation using accuracy as the scoring measure, then evaluate it on the held-out test set.",
     code: `param_grid = {
     "max_depth": [5, 10, 20, 30],
     "min_samples_split": [20, 40, 60, 80, 100],
@@ -211,23 +261,30 @@ bestClassTree = gridSearch.best_estimator_
 predictions = gridSearch.predict(test_X)
 probabilities = gridSearch.predict_proba(test_X)[:, 1]
 
+classificationSummary(train_y, gridSearch.predict(train_X))
+classificationSummary(test_y, gridSearch.predict(test_X))
+
 print("Accuracy:", accuracy_score(test_y, predictions))
 print("Precision:", precision_score(test_y, predictions))
 print("Recall:", recall_score(test_y, predictions))
 print("F1 Score:", f1_score(test_y, predictions))
 print("ROC-AUC:", roc_auc_score(test_y, probabilities))
 
+print(classification_report(
+    test_y, predictions,
+    target_names=["Active", "Churned"]
+))
+
 ConfusionMatrixDisplay.from_predictions(
-    test_y,
-    predictions,
+    test_y, predictions,
     display_labels=["Active", "Churned"]
 )
 plt.title("Decision Tree Confusion Matrix")
 plt.show()`
   },
   {
-    title: "06 · Random Forest",
-    description: "Fit the 500-tree Random Forest on the same training split and calculate class predictions and churn probabilities.",
+    title: "07 · Random Forest",
+    description: "Fit the 500-tree Random Forest on the same training split and evaluate its predictions, probabilities, and feature importance.",
     code: `rf = RandomForestClassifier(
     n_estimators=500,
     random_state=1,
@@ -249,6 +306,11 @@ print("Recall:", recall_score(test_y, rf_predictions))
 print("F1 Score:", f1_score(test_y, rf_predictions))
 print("ROC-AUC:", roc_auc_score(test_y, rf_probabilities))
 
+print(classification_report(
+    test_y, rf_predictions,
+    target_names=["Active", "Churned"]
+))
+
 rf_importance = pd.DataFrame({
     "Feature": train_X.columns,
     "Importance": rf.feature_importances_
@@ -257,7 +319,7 @@ rf_importance = pd.DataFrame({
 rf_importance`
   },
   {
-    title: "07 · Gradient Boosting",
+    title: "08 · Gradient Boosting",
     description: "Fit Gradient Boosting with 300 estimators and a 0.05 learning rate, then evaluate predictions, probabilities, and feature importance.",
     code: `boost = GradientBoostingClassifier(
     n_estimators=300,
@@ -266,6 +328,9 @@ rf_importance`
 )
 
 boost.fit(train_X, train_y)
+
+classificationSummary(train_y, boost.predict(train_X))
+classificationSummary(test_y, boost.predict(test_X))
 
 gb_predictions = boost.predict(test_X)
 gb_probabilities = boost.predict_proba(test_X)[:, 1]
@@ -278,9 +343,13 @@ print("Recall:", recall_score(test_y, gb_predictions))
 print("F1 Score:", f1_score(test_y, gb_predictions))
 print("ROC-AUC:", roc_auc_score(test_y, gb_probabilities))
 
+print(classification_report(
+    test_y, gb_predictions,
+    target_names=["Active", "Churned"]
+))
+
 ConfusionMatrixDisplay.from_predictions(
-    test_y,
-    gb_predictions,
+    test_y, gb_predictions,
     display_labels=["Active", "Churned"]
 )
 plt.title("Gradient Boosting Confusion Matrix")
@@ -294,8 +363,8 @@ gb_importance = pd.DataFrame({
 gb_importance`
   },
   {
-    title: "08 · Model Comparison",
-    description: "Put the three classifiers on the same evaluation table using accuracy, precision, recall, F1, and ROC-AUC from the held-out test set.",
+    title: "09 · Model Comparison",
+    description: "Build the final comparison table from the same held-out test set using accuracy, precision, recall, F1, and ROC-AUC.",
     code: `model_results = pd.DataFrame({
     "Model": [
         "Decision Tree",
@@ -575,7 +644,8 @@ export function CustomerChurnPrediction() {
 
           <div className="flex items-center justify-between border-t border-border pt-8">
             <Link to="/projects/retail-sales-intelligence" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> Previous project</Link>
-            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /></Link>
+            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" />
+            </Link>
           </div>
         </div>
       </main>
