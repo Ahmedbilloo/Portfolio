@@ -23,15 +23,18 @@ const behaviorComparison = [
   ["Unique songs", 149.077566, 152.400131, "songs"],
 ] as const;
 const featureImportance = [
-  ["Subscription type", 26.34],
-  ["Customer service inquiries", 24.42],
-  ["Weekly hours", 23.60],
-  ["Subscription pauses", 8.84],
-  ["Song skip rate", 7.42],
-  ["Age", 7.34],
-  ["Notifications clicked", 1.38],
-  ["Weekly unique songs", 0.65],
-  ["Tenure days", 0.0052],
+  ["weekly_hours", 23.6042],
+  ["subscription_type_Free", 20.4905],
+  ["customer_service_inquiries_Low", 18.1286],
+  ["num_subscription_pauses", 8.8381],
+  ["song_skip_rate", 7.4210],
+  ["age", 7.3369],
+  ["customer_service_inquiries_Medium", 6.2924],
+  ["subscription_type_Student", 5.8017],
+  ["notifications_clicked", 1.3831],
+  ["weekly_unique_songs", 0.6492],
+  ["subscription_type_Premium", 0.0491],
+  ["TenureDays", 0.0052],
 ] as const;
 
 const codeSnippets = [
@@ -48,7 +51,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import (
+from sklearn.metrics (
     accuracy_score, precision_score, recall_score,
     f1_score, roc_auc_score, classification_report,
     ConfusionMatrixDisplay
@@ -621,7 +624,7 @@ export function CustomerChurnPrediction() {
           </section>
 
           <section className="space-y-5">
-            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Gradient Boosting</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Gradient Boosting model, with dummy columns for categorical variables grouped back to their original predictor.</p></div>
+            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Gradient Boosting</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Gradient Boosting model, shown at the same dummy-column level as the notebook output.</p></div>
             <div className="card-surface p-6"><BarList data={featureImportance} colors={["#34d399", "#60a5fa", "#a78bfa", "#fbbf24", "#fb923c", "#f87171"]} /></div>
           </section>
 
@@ -644,7 +647,7 @@ export function CustomerChurnPrediction() {
 
           <div className="flex items-center justify-between border-t border-border pt-8">
             <Link to="/projects/retail-sales-intelligence" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> Previous project</Link>
-            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /></Link>
+            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /> </Link>
           </div>
         </div>
       </main>
