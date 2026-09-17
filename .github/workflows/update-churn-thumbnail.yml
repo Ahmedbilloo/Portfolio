@@ -1,7 +1,9 @@
 name: Update churn thumbnail
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/update-churn-thumbnail.yml'
 
 permissions:
   contents: write
@@ -22,15 +24,12 @@ jobs:
             <rect x="70" y="70" width="1140" height="660" rx="28" fill="#ffffff" stroke="#e2e8f0"/>
             <text x="120" y="145" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0f172a">CUSTOMER CHURN PREDICTION</text>
             <text x="120" y="180" font-family="Arial, sans-serif" font-size="16" fill="#64748b">Subscription engagement and retention risk</text>
-
             <rect x="120" y="225" width="300" height="145" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
             <text x="145" y="265" font-family="Arial, sans-serif" font-size="15" fill="#64748b">Validation accuracy</text>
             <text x="145" y="325" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#0f172a">84.5%</text>
-
             <rect x="440" y="225" width="300" height="145" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
             <text x="465" y="265" font-family="Arial, sans-serif" font-size="15" fill="#64748b">ROC-AUC</text>
             <text x="465" y="325" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#0f172a">0.93</text>
-
             <rect x="760" y="225" width="400" height="145" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
             <text x="785" y="265" font-family="Arial, sans-serif" font-size="15" fill="#64748b">Churn risk distribution</text>
             <rect x="785" y="295" width="320" height="18" rx="9" fill="#e2e8f0"/>
@@ -40,7 +39,6 @@ jobs:
             <text x="785" y="345" font-family="Arial, sans-serif" font-size="13" fill="#64748b">Low</text>
             <text x="930" y="345" font-family="Arial, sans-serif" font-size="13" fill="#64748b">Medium</text>
             <text x="1030" y="345" font-family="Arial, sans-serif" font-size="13" fill="#64748b">High</text>
-
             <text x="120" y="430" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Key churn signals</text>
             <line x1="120" y1="655" x2="1160" y2="655" stroke="#cbd5e1" stroke-width="2"/>
             <line x1="120" y1="455" x2="120" y2="655" stroke="#cbd5e1" stroke-width="2"/>
@@ -53,7 +51,6 @@ jobs:
             <text x="700" y="695" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Support inquiries</text>
             <text x="1000" y="695" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Skip rate</text>
           </svg>'''
-
           Path("public/customer-churn-thumbnail.svg").write_text(svg)
 
           path = Path("src/routes/index.tsx")
