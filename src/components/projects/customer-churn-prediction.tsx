@@ -17,10 +17,10 @@ const churnDistribution = [["Active", 60826], ["Churned", 64174]] as const;
 const subscriptionChurn = [["Free", 79.41], ["Student", 57.39], ["Family", 34.58], ["Premium", 33.91]] as const;
 const inquiryChurn = [["High", 74.33], ["Medium", 50.92], ["Low", 28.92]] as const;
 const behaviorComparison = [
-  ["Weekly hours", 29.525, 20.783, "hours"],
-  ["Song skip rate", 0.453, 0.546, "rate"],
-  ["Subscription pauses", 1.725, 2.244, "pauses"],
-  ["Unique songs", 149.078, 152.400, "songs"],
+  ["Weekly hours", 29.525461, 20.782675, "hours"],
+  ["Song skip rate", 0.453300, 0.545826, "rate"],
+  ["Subscription pauses", 1.724723, 2.243666, "pauses"],
+  ["Unique songs", 149.077566, 152.400131, "songs"],
 ] as const;
 const featureImportance = [
   ["Subscription type", 26.34],
@@ -31,7 +31,7 @@ const featureImportance = [
   ["Age", 7.34],
   ["Notifications clicked", 1.38],
   ["Weekly unique songs", 0.65],
-  ["Tenure days", 0.01],
+  ["Tenure days", 0.0052],
 ] as const;
 
 const codeSnippets = [
@@ -48,7 +48,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics (
+from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
     f1_score, roc_auc_score, classification_report,
     ConfusionMatrixDisplay
@@ -644,8 +644,7 @@ export function CustomerChurnPrediction() {
 
           <div className="flex items-center justify-between border-t border-border pt-8">
             <Link to="/projects/retail-sales-intelligence" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> Previous project</Link>
-            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" />
-            </Link>
+            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /></Link>
           </div>
         </div>
       </main>
