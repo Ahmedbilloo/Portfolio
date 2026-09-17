@@ -80,6 +80,8 @@ export default function Home() {
                   <div className="aspect-[16/10] overflow-hidden border-b border-border bg-surface">
                     {p.slug === "retail-sales-intelligence" ? (
                       <img src="/retail-sales-dashboard.svg" alt="Retail sales analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
+                    ) : p.slug === "customer-churn-prediction" ? (
+                      <img src="/customer-churn-thumbnail.svg" alt="Customer churn prediction model preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
                     ) : (
                       <img src="/project-screenshot.svg" alt="Analytics dashboard preview" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
                     )}
