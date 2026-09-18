@@ -23,20 +23,20 @@ const behaviorComparison = [
   ["Unique songs", 149.077566, 152.400131, "songs"],
 ] as const;
 const featureImportance = [
-  ["weekly_hours", 23.7832],
-  ["subscription_type_Free", 20.1853],
-  ["customer_service_inquiries_High", 13.0581],
-  ["customer_service_inquiries_Low", 11.4802],
-  ["num_subscription_pauses", 8.6637],
-  ["song_skip_rate", 7.3414],
-  ["age", 7.2809],
-  ["subscription_type_Student", 5.8767],
-  ["notifications_clicked", 1.3802],
-  ["weekly_unique_songs", 0.5677],
-  ["subscription_type_Premium", 0.2483],
-  ["subscription_type_Family", 0.1214],
-  ["TenureDays", 0.0109],
-  ["customer_service_inquiries_Medium", 0.0020],
+  ["weekly_hours", 21.0358],
+  ["song_skip_rate", 11.7541],
+  ["age", 9.8778],
+  ["subscription_type_Free", 8.2230],
+  ["TenureDays", 7.1376],
+  ["weekly_unique_songs", 7.0593],
+  ["customer_service_inquiries_High", 6.9405],
+  ["num_subscription_pauses", 6.7249],
+  ["notifications_clicked", 6.6071],
+  ["customer_service_inquiries_Low", 5.6021],
+  ["subscription_type_Family", 2.5615],
+  ["subscription_type_Premium", 2.5167],
+  ["subscription_type_Student", 2.0918],
+  ["customer_service_inquiries_Medium", 1.8677],
 ] as const;
 
 const codeSnippets = [
@@ -291,7 +291,7 @@ plt.show()`
     title: "07 · Random Forest",
     description: "Fit the 500-tree Random Forest on the same training split and evaluate its predictions, probabilities, and feature importance.",
     code: `rf = RandomForestClassifier(
-    n_estimators=500,
+    n_estimators=300,
     random_state=1,
     n_jobs=-1
 )
@@ -622,7 +622,7 @@ export function CustomerChurnPrediction() {
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Engagement</p>
                 <h3 className="mt-2 text-lg font-bold">Churned users listen less</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churned subscribers averaged 20.8 weekly listening hours, compared with 29.5 for active subscribers. Weekly hours was also the most important feature in the Gradient Boosting model.</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churned subscribers averaged 20.8 weekly listening hours, compared with 29.5 for active subscribers. Weekly hours was the most important feature in the Random Forest model, followed by song skip rate and age.</p>
               </div>
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Subscription</p>
@@ -632,7 +632,7 @@ export function CustomerChurnPrediction() {
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Customer service</p>
                 <h3 className="mt-2 text-lg font-bold">Higher inquiry levels are linked with higher churn</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn was 28.92% for Low inquiry customers, 50.92% for Medium, and 74.33% for High. Customer service inquiry level was also important in the model.</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn was 28.92% for Low inquiry customers, 50.92% for Medium, and 74.33% for High. Customer service inquiry level was also used by the model, with High inquiries showing higher observed churn than Medium and Low.</p>
               </div>
             </div>
             <div className="card-surface p-6">
@@ -695,7 +695,7 @@ export function CustomerChurnPrediction() {
           </section>
 
           <section className="space-y-5">
-            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Gradient Boosting</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Gradient Boosting model, shown at the same dummy-column level as the notebook output. All categories were retained during dummy encoding.</p></div>
+            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Random Forest</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Random Forest model, shown at the same dummy-column level as the notebook output. All categories were retained during dummy encoding.</p></div>
             <div className="card-surface p-6"><BarList data={featureImportance} colors={["#34d399", "#60a5fa", "#a78bfa", "#fbbf24", "#fb923c", "#f87171"]} /></div>
           </section>
 
