@@ -188,41 +188,167 @@ def train_and_forecast_sku(
     filename: "customer_churn_prediction.py",
     projectName: "Customer Churn Prediction & Retention Analytics",
     description: "Python workflow for subscriber churn analysis, feature preparation, classification model comparison, and Random Forest feature importance",
-    code: `"""
-Customer Churn Prediction & Retention Analytics
-Dataset: Streaming Subscription Churn Model
-Author: Ahmed Billoo
-"""
-
-import pandas as pd
+    code: `import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    classification_report,
+    accuracy_score, precision_score, recall_score,
+    f1_score, roc_auc_score, classification_report,
     ConfusionMatrixDisplay
 )
+from dmba import classificationSummary
+import kagglehub
 
-# 1. Load data
-data = pd.read_csv("train.csv")
+kagglehub.login()
+path = kagglehub.competition_download(
+    "streaming-subscription-churn-model"
+)
 
-# 2. Create derived features
+DATA = Path(path)
+data = pd.read_csv(DATA / "train.csv")
+
+print("Train:", data.shape)
+data.head()
+
+# ════════════════════════════════════════════════════════════
+
+data.info()
+
+data.isna().sum()
+data.describe(include="all").T
+
+print("Duplicate rows:", data.duplicated().sum())
+print(
+    "Duplicate customer IDs:",
+    data["customer_id"].duplicated().sum()
+)
+
+data["churned"].value_counts()
+data["churned"].value_counts(normalize=True) * 100
+
+churn_counts = data["churned"].value_counts().sort_index()
+ax = churn_counts.plot(kind="bar", figsize=(7, 5))
+ax.set_title("Subscriber Churn Distribution")
+ax.set_xlabel("Churned")
+ax.set_ylabel("Subscribers")
+ax.set_xticklabels(["Active", "Churned"], rotation=0)
+plt.tight_layout()
+plt.show()
+
+# ════════════════════════════════════════════════════════════
+
 data["TenureDays"] = -data["signup_date"]
 data["SongsPerHour"] = (
     data["weekly_songs_played"] /
     data["weekly_hours"].replace(0, np.nan)
 )
 
-# 3. Select final features
+numeric_analysis = [
+    "TenureDays", "weekly_hours", "average_session_length",
+    "song_skip_rate", "weekly_songs_played",
+    "weekly_unique_songs", "num_subscription_pauses"
+]
+
+summary = data.groupby("churned")[numeric_analysis].mean().T
+summary.columns = ["Active", "Churned"]
+summary
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+data.boxplot(column="weekly_hours", by="churned", ax=axes[0])
+axes[0].set_title("Weekly Listening Hours by Churn")
+axes[0].set_xlabel("Churned")
+axes[0].set_ylabel("Weekly Hours")
+
+data.boxplot(column="song_skip_rate", by="churned", ax=axes[1])
+axes[1].set_title("Song Skip Rate by Churn")
+axes[1].set_xlabel("Churned")
+axes[1].set_ylabel("Skip Rate")
+
+plt.suptitle("")
+plt.tight_layout()
+plt.show()
+
+subscription_churn = pd.crosstab(
+    data["subscription_type"], data["churned"], normalize="index"
+) * 100
+subscription_churn.columns = ["Active %", "Churned %"]
+subscription_churn.sort_values("Churned %", ascending=False)
+
+plan_churn = pd.crosstab(
+    data["payment_plan"], data["churned"], normalize="index"
+) * 100
+plan_churn.columns = ["Active %", "Churned %"]
+plan_churn
+
+inquiry_churn = pd.crosstab(
+    data["customer_service_inquiries"], data["churned"], normalize="index"
+).mul(100)
+inquiry_churn.columns = ["Active %", "Churned %"]
+inquiry_churn.sort_values("Churned %", ascending=False)
+
+categorical_features = data.select_dtypes(include="object").columns.tolist()
+numeric_features = data.select_dtypes(exclude="object").columns.tolist()
+
+corr = data[numeric_features].corr()
+plt.figure(figsize=(12, 8))
+sns.heatmap(corr, cmap="coolwarm", center=0)
+plt.title("Feature Correlation Matrix")
+plt.show()
+
+# ════════════════════════════════════════════════════════════
+
+features = [
+    "age", "location", "subscription_type", "payment_plan",
+    "num_subscription_pauses", "payment_method",
+    "customer_service_inquiries", "weekly_hours",
+    "average_session_length", "song_skip_rate",
+    "weekly_songs_played", "weekly_unique_songs",
+    "num_favorite_artists", "num_platform_friends",
+    "num_playlists_created", "num_shared_playlists",
+    "notifications_clicked", "TenureDays", "SongsPerHour"
+]
+
+X = data[features]
+y = data["churned"]
+
+X = pd.get_dummies(
+    X, columns=categorical_features, drop_first=True, dtype=int
+)
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.20, random_state=1, stratify=y
+)
+
+param_grid = {
+    "max_depth": [5, 10, 20, 30],
+    "min_samples_split": [20, 40, 60, 80, 100],
+    "min_impurity_decrease": [0, 0.0005, 0.001, 0.005, 0.01],
+}
+
+gridSearch = GridSearchCV(
+    DecisionTreeClassifier(criterion="gini"),
+    param_grid, cv=3, n_jobs=-1, verbose=3
+)
+gridSearch.fit(train_X, train_y)
+
+bestClassTree = gridSearch.best_estimator_
+
+tree_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": bestClassTree.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+tree_importance
+
+# ════════════════════════════════════════════════════════════
+
 features_final = [
     "age",
     "subscription_type",
@@ -235,13 +361,11 @@ features_final = [
     "TenureDays",
 ]
 
+categorical_features = data[features_final].select_dtypes(
+    include="object"
+).columns.tolist()
+
 X = data[features_final]
-y = data["churned"]
-
-# 4. Convert categorical variables to dummy variables
-# Keep all categories in the final feature set.
-categorical_features = X.select_dtypes(include="object").columns.tolist()
-
 X = pd.get_dummies(
     X,
     columns=categorical_features,
@@ -249,16 +373,17 @@ X = pd.get_dummies(
     dtype=int
 )
 
-# 5. Stratified train-test split
+y = data["churned"]
+
 train_X, test_X, train_y, test_y = train_test_split(
-    X,
-    y,
+    X, y,
     test_size=0.20,
     random_state=1,
     stratify=y
 )
 
-# 6. Tune the Decision Tree
+# ════════════════════════════════════════════════════════════
+
 param_grid = {
     "max_depth": [5, 10, 20, 30],
     "min_samples_split": [20, 40, 60, 80, 100],
@@ -274,18 +399,45 @@ gridSearch = GridSearchCV(
 )
 
 gridSearch.fit(train_X, train_y)
+print("Initial score:", gridSearch.best_score_)
+print("Initial parameters:", gridSearch.best_params_)
 
+bestClassTree = gridSearch.best_estimator_
 predictions = gridSearch.predict(test_X)
 probabilities = gridSearch.predict_proba(test_X)[:, 1]
 
-# 7. Random Forest
+classificationSummary(train_y, gridSearch.predict(train_X))
+classificationSummary(test_y, gridSearch.predict(test_X))
+
+print("Accuracy:", accuracy_score(test_y, predictions))
+print("Precision:", precision_score(test_y, predictions))
+print("Recall:", recall_score(test_y, predictions))
+print("F1 Score:", f1_score(test_y, predictions))
+print("ROC-AUC:", roc_auc_score(test_y, probabilities))
+
+print(classification_report(
+    test_y, predictions,
+    target_names=["Active", "Churned"]
+))
+
+ConfusionMatrixDisplay.from_predictions(
+    test_y, predictions,
+    display_labels=["Active", "Churned"]
+)
+plt.title("Decision Tree Confusion Matrix")
+plt.show()
+
+# ════════════════════════════════════════════════════════════
+
 rf = RandomForestClassifier(
     n_estimators=300,
     random_state=1,
     n_jobs=-1
 )
-
 rf.fit(train_X, train_y)
+
+classificationSummary(train_y, rf.predict(train_X))
+classificationSummary(test_y, rf.predict(test_X))
 
 rf_predictions = rf.predict(test_X)
 rf_probabilities = rf.predict_proba(test_X)[:, 1]
@@ -299,12 +451,19 @@ print("F1 Score:", f1_score(test_y, rf_predictions))
 print("ROC-AUC:", roc_auc_score(test_y, rf_probabilities))
 
 print(classification_report(
-    test_y,
-    rf_predictions,
+    test_y, rf_predictions,
     target_names=["Active", "Churned"]
 ))
 
-# 8. Gradient Boosting
+rf_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": rf.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+rf_importance
+
+# ════════════════════════════════════════════════════════════
+
 boost = GradientBoostingClassifier(
     n_estimators=300,
     learning_rate=0.05,
@@ -312,6 +471,9 @@ boost = GradientBoostingClassifier(
 )
 
 boost.fit(train_X, train_y)
+
+classificationSummary(train_y, boost.predict(train_X))
+classificationSummary(test_y, boost.predict(test_X))
 
 gb_predictions = boost.predict(test_X)
 gb_probabilities = boost.predict_proba(test_X)[:, 1]
@@ -324,7 +486,27 @@ print("Recall:", recall_score(test_y, gb_predictions))
 print("F1 Score:", f1_score(test_y, gb_predictions))
 print("ROC-AUC:", roc_auc_score(test_y, gb_probabilities))
 
-# 9. Compare the three models
+print(classification_report(
+    test_y, gb_predictions,
+    target_names=["Active", "Churned"]
+))
+
+ConfusionMatrixDisplay.from_predictions(
+    test_y, gb_predictions,
+    display_labels=["Active", "Churned"]
+)
+plt.title("Gradient Boosting Confusion Matrix")
+plt.show()
+
+gb_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": boost.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+gb_importance
+
+# ════════════════════════════════════════════════════════════
+
 model_results = pd.DataFrame({
     "Model": [
         "Decision Tree",
@@ -358,31 +540,10 @@ model_results = pd.DataFrame({
     ]
 })
 
-print(model_results.sort_values("ROC-AUC", ascending=False))
-
-# 10. Random Forest feature importance
-rf_importance = pd.DataFrame({
-    "Feature": train_X.columns,
-    "Importance": rf.feature_importances_
-}).sort_values("Importance", ascending=False)
-
-print(rf_importance)
-
-rf_importance.plot(
-    x="Feature",
-    y="Importance",
-    kind="barh",
-    figsize=(8, 5),
-    legend=False
-)
-
-plt.title("Random Forest Feature Importance")
-plt.xlabel("Importance")
-plt.ylabel("Feature")
-plt.gca().invert_yaxis()
-plt.tight_layout()
-plt.show()
-`,
+model_results.sort_values(
+    "ROC-AUC",
+    ascending=False
+)`,
   },
 
   "loan-default-prediction": {
