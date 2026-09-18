@@ -613,7 +613,7 @@ export function CustomerChurnPrediction() {
           <section className="space-y-5">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-primary">Interpretation</span>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight">What I Found</h2>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight">Key Findings</h2>
               <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">A few patterns stand out when comparing active and churned subscribers.</p>
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
