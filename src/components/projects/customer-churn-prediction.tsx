@@ -613,42 +613,34 @@ export function CustomerChurnPrediction() {
           <section className="space-y-5">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-primary">Interpretation</span>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight">What the Analysis Tells Us</h2>
-              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The charts point to a clear set of behavioral and subscription characteristics associated with churn. These are predictive signals in this dataset, not evidence that any single factor directly causes customers to leave.</p>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight">What I Found</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">A few patterns stand out when comparing active and churned subscribers.</p>
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Engagement</p>
-                <h3 className="mt-2 text-lg font-bold">Lower listening activity stands out</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churned subscribers averaged 20.8 weekly hours versus 29.5 for active subscribers, about 30% lower. Weekly hours was also the largest feature importance in the Gradient Boosting model at 23.6%.</p>
+                <h3 className="mt-2 text-lg font-bold">Churned users listen less</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churned subscribers averaged 20.8 weekly listening hours, compared with 29.5 for active subscribers. Weekly hours was also the most important feature in the Gradient Boosting model.</p>
               </div>
               <div className="card-surface p-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Subscription risk</p>
-                <h3 className="mt-2 text-lg font-bold">Free subscribers show a much higher churn rate</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The churn chart shows 79.41% for Free subscribers compared with 33.91% for Premium subscribers. Subscription type therefore provides an important segmentation signal in the model.</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Subscription</p>
+                <h3 className="mt-2 text-lg font-bold">Free users churn more</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The churn rate was 79.41% for Free subscribers and 33.91% for Premium subscribers. Subscription type was one of the main features used by the model.</p>
               </div>
               <div className="card-surface p-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Service signals</p>
-                <h3 className="mt-2 text-lg font-bold">Inquiry level separates customer groups</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn rises from 28.92% for Low inquiry customers to 74.33% for High inquiry customers. The Gradient Boosting model also assigns substantial importance to the customer service inquiry variables.</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Customer service</p>
+                <h3 className="mt-2 text-lg font-bold">High inquiry levels are linked with higher churn</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn was 28.92% for customers with Low inquiries and 74.33% for customers with High inquiries. Customer service inquiry level was also important in the model.</p>
               </div>
             </div>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="card-surface p-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Behavioral pattern</p>
-                <h3 className="mt-2 text-lg font-bold">Churned subscribers show a different engagement profile</h3>
-                <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  <li>• <span className="font-semibold text-foreground">Weekly hours:</span> 20.8 vs. 29.5 for active subscribers.</li>
-                  <li>• <span className="font-semibold text-foreground">Song skip rate:</span> 54.6% vs. 45.3%, roughly 20% higher.</li>
-                  <li>• <span className="font-semibold text-foreground">Subscription pauses:</span> 2.24 vs. 1.72 on average, roughly 30% higher.</li>
-                  <li>• <span className="font-semibold text-foreground">Weekly unique songs:</span> 152.4 vs. 149.1, a relatively small difference.</li>
-                </ul>
-              </div>
-              <div className="card-surface p-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Model interpretation</p>
-                <h3 className="mt-2 text-lg font-bold">The model can support prioritization, not replace judgment</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Gradient Boosting reached a ROC-AUC of 0.940 on the held-out test set. Its feature importance highlights weekly hours, Free subscription status, customer service inquiry level, subscription pauses, and song skip rate as the most prominent predictors among the final encoded features.</p>
-              </div>
+            <div className="card-surface p-6">
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary">Other differences</p>
+              <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                <li>• <span className="font-semibold text-foreground">Song skip rate:</span> 54.6% for churned subscribers vs. 45.3% for active subscribers.</li>
+                <li>• <span className="font-semibold text-foreground">Subscription pauses:</span> 2.24 for churned subscribers vs. 1.72 for active subscribers.</li>
+                <li>• <span className="font-semibold text-foreground">Weekly unique songs:</span> 152.4 for churned subscribers vs. 149.1 for active subscribers, so the difference was small.</li>
+                <li>• <span className="font-semibold text-foreground">Model performance:</span> Gradient Boosting achieved a ROC-AUC of 0.940 on the test set.</li>
+              </ul>
             </div>
           </section>
 
