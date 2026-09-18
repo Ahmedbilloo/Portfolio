@@ -44,8 +44,8 @@ export const projects: ProjectSummary[] = [
     title: "Customer Churn Prediction & Retention Analytics",
     category: "Machine Learning",
     description:
-      "Built customer-level churn prediction models from UCI Online Retail transaction history to identify customers likely to become inactive and understand the behaviors associated with churn.",
-    tech: ["Python", "Pandas", "Scikit-learn", "Machine Learning"],
+      "Built churn prediction models on 125,000 streaming subscribers to identify behavioral patterns associated with churn and compare classification performance.",
+    tech: ["Python", "Pandas", "Scikit-learn", "Decision Tree", "Random Forest", "Gradient Boosting"],
   },
   {
     slug: "business-intelligence-forecasting",
