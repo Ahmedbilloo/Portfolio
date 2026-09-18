@@ -611,6 +611,83 @@ export function CustomerChurnPrediction() {
           </section>
 
           <section className="space-y-5">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">Interpretation</span>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight">What the Analysis Tells Us</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The charts point to a clear set of behavioral and subscription characteristics associated with churn. These are predictive signals in this dataset, not evidence that any single factor directly causes customers to leave.</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="card-surface p-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Engagement</p>
+                <h3 className="mt-2 text-lg font-bold">Lower listening activity stands out</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churned subscribers averaged 20.8 weekly hours versus 29.5 for active subscribers, about 30% lower. Weekly hours was also the largest feature importance in the Gradient Boosting model at 23.6%.</p>
+              </div>
+              <div className="card-surface p-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Subscription risk</p>
+                <h3 className="mt-2 text-lg font-bold">Free subscribers show a much higher churn rate</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The churn chart shows 79.41% for Free subscribers compared with 33.91% for Premium subscribers. Subscription type therefore provides an important segmentation signal in the model.</p>
+              </div>
+              <div className="card-surface p-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Service signals</p>
+                <h3 className="mt-2 text-lg font-bold">Inquiry level separates customer groups</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn rises from 28.92% for Low inquiry customers to 74.33% for High inquiry customers. The Gradient Boosting model also assigns substantial importance to the customer service inquiry variables.</p>
+              </div>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="card-surface p-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Behavioral pattern</p>
+                <h3 className="mt-2 text-lg font-bold">Churned subscribers show a different engagement profile</h3>
+                <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>• <span className="font-semibold text-foreground">Weekly hours:</span> 20.8 vs. 29.5 for active subscribers.</li>
+                  <li>• <span className="font-semibold text-foreground">Song skip rate:</span> 54.6% vs. 45.3%, roughly 20% higher.</li>
+                  <li>• <span className="font-semibold text-foreground">Subscription pauses:</span> 2.24 vs. 1.72 on average, roughly 30% higher.</li>
+                  <li>• <span className="font-semibold text-foreground">Weekly unique songs:</span> 152.4 vs. 149.1, a relatively small difference.</li>
+                </ul>
+              </div>
+              <div className="card-surface p-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Model interpretation</p>
+                <h3 className="mt-2 text-lg font-bold">The model can support prioritization, not replace judgment</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Gradient Boosting reached a ROC-AUC of 0.940 on the held-out test set. Its feature importance highlights weekly hours, Free subscription status, customer service inquiry level, subscription pauses, and song skip rate as the most prominent predictors among the final encoded features.</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-5">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">Business Impact</span>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight">Turning Churn Signals into Retention Actions</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The business value is not simply predicting churn. It is using the model and the observed customer segments to focus retention resources where they can be investigated and tested.</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="card-surface p-6">
+                <h3 className="text-lg font-bold">1. Prioritize at-risk subscribers</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Use predicted churn probabilities to create an at-risk queue for retention teams. This allows teams to focus outreach on customers flagged by multiple signals rather than contacting the entire subscriber base.</p>
+              </div>
+              <div className="card-surface p-6">
+                <h3 className="text-lg font-bold">2. Build engagement interventions</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The lower weekly listening hours among churned subscribers suggests that declining engagement can be monitored as an early warning signal. Product teams could test personalized content, discovery prompts, or re-engagement campaigns and measure whether engagement improves before churn occurs.</p>
+              </div>
+              <div className="card-surface p-6">
+                <h3 className="text-lg font-bold">3. Investigate service friction</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The large difference in churn rates across inquiry levels makes customer service a practical area for investigation. Teams can review recurring issues, resolution times, and customer feedback for high-inquiry subscribers rather than assuming inquiries themselves cause churn.</p>
+              </div>
+              <div className="card-surface p-6">
+                <h3 className="text-lg font-bold">4. Segment retention strategy</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The subscription chart supports differentiated retention analysis by plan. Free subscribers show substantially higher observed churn than Premium subscribers, so the next step would be to test whether targeted conversion, value communication, or product engagement initiatives change retention outcomes.</p>
+              </div>
+            </div>
+            <div className="card-surface p-6">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
+                <div>
+                  <h3 className="font-bold">How this could be used operationally</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A production workflow could score active subscribers periodically, rank them by predicted churn probability, attach the key behavioral signals used for prioritization, and route selected customers into retention experiments. Success should then be measured with downstream retention and revenue metrics rather than model accuracy alone.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-5">
             <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Evaluation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Comparing Churn Classifiers</h2><p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">All three models were evaluated on the same stratified 20% test set. The colored bars make the three classifiers easy to distinguish across the five metrics.</p></div>
             <div className="card-surface p-5 sm:p-7"><div className="h-[360px] w-full"><ModelComparisonChart /></div></div>
             <div className="overflow-x-auto rounded-xl border border-border bg-card">
