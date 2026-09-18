@@ -184,6 +184,207 @@ def train_and_forecast_sku(
     }`,
   },
 
+  "customer-churn-prediction": {
+    filename: "customer_churn_prediction.py",
+    projectName: "Customer Churn Prediction & Retention Analytics",
+    description: "Python workflow for subscriber churn analysis, feature preparation, classification model comparison, and Random Forest feature importance",
+    code: `"""
+Customer Churn Prediction & Retention Analytics
+Dataset: Streaming Subscription Churn Model
+Author: Ahmed Billoo
+"""
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    classification_report,
+    ConfusionMatrixDisplay
+)
+
+# 1. Load data
+data = pd.read_csv("train.csv")
+
+# 2. Create derived features
+data["TenureDays"] = -data["signup_date"]
+data["SongsPerHour"] = (
+    data["weekly_songs_played"] /
+    data["weekly_hours"].replace(0, np.nan)
+)
+
+# 3. Select final features
+features_final = [
+    "age",
+    "subscription_type",
+    "num_subscription_pauses",
+    "customer_service_inquiries",
+    "weekly_hours",
+    "song_skip_rate",
+    "weekly_unique_songs",
+    "notifications_clicked",
+    "TenureDays",
+]
+
+X = data[features_final]
+y = data["churned"]
+
+# 4. Convert categorical variables to dummy variables
+# Keep all categories in the final feature set.
+categorical_features = X.select_dtypes(include="object").columns.tolist()
+
+X = pd.get_dummies(
+    X,
+    columns=categorical_features,
+    drop_first=False,
+    dtype=int
+)
+
+# 5. Stratified train-test split
+train_X, test_X, train_y, test_y = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=1,
+    stratify=y
+)
+
+# 6. Tune the Decision Tree
+param_grid = {
+    "max_depth": [5, 10, 20, 30],
+    "min_samples_split": [20, 40, 60, 80, 100],
+    "min_impurity_decrease": [0, 0.0005, 0.001, 0.005, 0.01],
+}
+
+gridSearch = GridSearchCV(
+    DecisionTreeClassifier(criterion="gini"),
+    param_grid,
+    cv=3,
+    n_jobs=-1,
+    verbose=3
+)
+
+gridSearch.fit(train_X, train_y)
+
+predictions = gridSearch.predict(test_X)
+probabilities = gridSearch.predict_proba(test_X)[:, 1]
+
+# 7. Random Forest
+rf = RandomForestClassifier(
+    n_estimators=300,
+    random_state=1,
+    n_jobs=-1
+)
+
+rf.fit(train_X, train_y)
+
+rf_predictions = rf.predict(test_X)
+rf_probabilities = rf.predict_proba(test_X)[:, 1]
+
+print("Random Forest Results")
+print("---------------------")
+print("Accuracy:", accuracy_score(test_y, rf_predictions))
+print("Precision:", precision_score(test_y, rf_predictions))
+print("Recall:", recall_score(test_y, rf_predictions))
+print("F1 Score:", f1_score(test_y, rf_predictions))
+print("ROC-AUC:", roc_auc_score(test_y, rf_probabilities))
+
+print(classification_report(
+    test_y,
+    rf_predictions,
+    target_names=["Active", "Churned"]
+))
+
+# 8. Gradient Boosting
+boost = GradientBoostingClassifier(
+    n_estimators=300,
+    learning_rate=0.05,
+    random_state=1
+)
+
+boost.fit(train_X, train_y)
+
+gb_predictions = boost.predict(test_X)
+gb_probabilities = boost.predict_proba(test_X)[:, 1]
+
+print("Gradient Boosting Results")
+print("-------------------------")
+print("Accuracy:", accuracy_score(test_y, gb_predictions))
+print("Precision:", precision_score(test_y, gb_predictions))
+print("Recall:", recall_score(test_y, gb_predictions))
+print("F1 Score:", f1_score(test_y, gb_predictions))
+print("ROC-AUC:", roc_auc_score(test_y, gb_probabilities))
+
+# 9. Compare the three models
+model_results = pd.DataFrame({
+    "Model": [
+        "Decision Tree",
+        "Random Forest",
+        "Gradient Boosting"
+    ],
+    "Accuracy": [
+        accuracy_score(test_y, predictions),
+        accuracy_score(test_y, rf_predictions),
+        accuracy_score(test_y, gb_predictions)
+    ],
+    "Precision": [
+        precision_score(test_y, predictions),
+        precision_score(test_y, rf_predictions),
+        precision_score(test_y, gb_predictions)
+    ],
+    "Recall": [
+        recall_score(test_y, predictions),
+        recall_score(test_y, rf_predictions),
+        recall_score(test_y, gb_predictions)
+    ],
+    "F1 Score": [
+        f1_score(test_y, predictions),
+        f1_score(test_y, rf_predictions),
+        f1_score(test_y, gb_predictions)
+    ],
+    "ROC-AUC": [
+        roc_auc_score(test_y, probabilities),
+        roc_auc_score(test_y, rf_probabilities),
+        roc_auc_score(test_y, gb_probabilities)
+    ]
+})
+
+print(model_results.sort_values("ROC-AUC", ascending=False))
+
+# 10. Random Forest feature importance
+rf_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": rf.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+print(rf_importance)
+
+rf_importance.plot(
+    x="Feature",
+    y="Importance",
+    kind="barh",
+    figsize=(8, 5),
+    legend=False
+)
+
+plt.title("Random Forest Feature Importance")
+plt.xlabel("Importance")
+plt.ylabel("Feature")
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+`,
+  },
+
   "loan-default-prediction": {
     filename: "credit_risk_pipeline.py",
     projectName: "Loan Default Prediction & Credit Risk Scoring",
