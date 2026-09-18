@@ -8,9 +8,9 @@ import { CodeBlock } from "@/components/code-block";
 const sourceUrl = "https://www.kaggle.com/competitions/streaming-subscription-churn-model/data";
 
 const modelResults = [
-  { model: "Decision Tree", short: "Tree", color: "#60a5fa", accuracy: 84.176, precision: 84.784, recall: 84.309, f1: 84.546, auc: 93.237 },
-  { model: "Random Forest", short: "RF", color: "#a78bfa", accuracy: 84.456, precision: 84.743, recall: 85.033, f1: 84.888, auc: 93.581 },
-  { model: "Gradient Boosting", short: "GB", color: "#34d399", accuracy: 84.616, precision: 85.816, recall: 83.903, f1: 84.849, auc: 94.029 },
+  { model: "Decision Tree", short: "Tree", color: "#60a5fa", accuracy: 84.396, precision: 84.001, recall: 85.984, f1: 84.981, auc: 93.318 },
+  { model: "Random Forest", short: "RF", color: "#a78bfa", accuracy: 84.212, precision: 84.541, recall: 84.745, f1: 84.643, auc: 93.497 },
+  { model: "Gradient Boosting", short: "GB", color: "#34d399", accuracy: 84.644, precision: 85.334, recall: 84.636, f1: 84.983, auc: 94.018 },
 ] as const;
 
 const churnDistribution = [["Active", 60826], ["Churned", 64174]] as const;
@@ -23,18 +23,20 @@ const behaviorComparison = [
   ["Unique songs", 149.077566, 152.400131, "songs"],
 ] as const;
 const featureImportance = [
-  ["weekly_hours", 23.6042],
-  ["subscription_type_Free", 20.4905],
-  ["customer_service_inquiries_Low", 18.1286],
-  ["num_subscription_pauses", 8.8381],
-  ["song_skip_rate", 7.4210],
-  ["age", 7.3369],
-  ["customer_service_inquiries_Medium", 6.2924],
-  ["subscription_type_Student", 5.8017],
-  ["notifications_clicked", 1.3831],
-  ["weekly_unique_songs", 0.6492],
-  ["subscription_type_Premium", 0.0491],
-  ["TenureDays", 0.0052],
+  ["weekly_hours", 23.7832],
+  ["subscription_type_Free", 20.1853],
+  ["customer_service_inquiries_High", 13.0581],
+  ["customer_service_inquiries_Low", 11.4802],
+  ["num_subscription_pauses", 8.6637],
+  ["song_skip_rate", 7.3414],
+  ["age", 7.2809],
+  ["subscription_type_Student", 5.8767],
+  ["notifications_clicked", 1.3802],
+  ["weekly_unique_songs", 0.5677],
+  ["subscription_type_Premium", 0.2483],
+  ["subscription_type_Family", 0.1214],
+  ["TenureDays", 0.0109],
+  ["customer_service_inquiries_Medium", 0.0020],
 ] as const;
 
 const codeSnippets = [
@@ -226,7 +228,7 @@ X = data[features_final]
 X = pd.get_dummies(
     X,
     columns=categorical_features,
-    drop_first=True,
+    drop_first=False,
     dtype=int
 )
 
@@ -600,7 +602,7 @@ export function CustomerChurnPrediction() {
           </section>
 
           <section className="space-y-5">
-            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Data Preparation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">From Subscriber Records to Model Features</h2><p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The dataset contains 20 original columns. After exploratory analysis and feature importance review, the final model used nine original predictor variables before categorical variables were converted to dummy columns.</p></div>
+            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Data Preparation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">From Subscriber Records to Model Features</h2><p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The dataset contains 20 original columns. After exploratory analysis and feature importance review, the final model used nine original predictor variables. Categorical variables were then converted to dummy columns without dropping any category.</p></div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 ["Age", "Subscriber age"], ["Subscription type", "Free, Student, Family or Premium"], ["Subscription pauses", "Number of subscription pauses"],
@@ -625,12 +627,12 @@ export function CustomerChurnPrediction() {
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Subscription</p>
                 <h3 className="mt-2 text-lg font-bold">Free users churn more</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The churn rate was 79.41% for Free subscribers and 33.91% for Premium subscribers. Subscription type was one of the main features used by the model.</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The churn rate was 79.41% for Free subscribers and 33.91% for Premium subscribers. Subscription type was also one of the main features used by the model.</p>
               </div>
               <div className="card-surface p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Customer service</p>
-                <h3 className="mt-2 text-lg font-bold">High inquiry levels are linked with higher churn</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn was 28.92% for customers with Low inquiries and 74.33% for customers with High inquiries. Customer service inquiry level was also important in the model.</p>
+                <h3 className="mt-2 text-lg font-bold">Higher inquiry levels are linked with higher churn</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Churn was 28.92% for Low inquiry customers, 50.92% for Medium, and 74.33% for High. Customer service inquiry level was also important in the model.</p>
               </div>
             </div>
             <div className="card-surface p-6">
@@ -661,7 +663,7 @@ export function CustomerChurnPrediction() {
               </div>
               <div className="card-surface p-6">
                 <h3 className="text-lg font-bold">3. Investigate service friction</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The large difference in churn rates across inquiry levels makes customer service a practical area for investigation. Teams can review recurring issues, resolution times, and customer feedback for high-inquiry subscribers rather than assuming inquiries themselves cause churn.</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The difference in churn rates across inquiry levels makes customer service a practical area for investigation. Teams can review recurring issues, resolution times, and customer feedback for high-inquiry subscribers rather than assuming inquiries themselves cause churn.</p>
               </div>
               <div className="card-surface p-6">
                 <h3 className="text-lg font-bold">4. Segment retention strategy</h3>
@@ -693,7 +695,7 @@ export function CustomerChurnPrediction() {
           </section>
 
           <section className="space-y-5">
-            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Gradient Boosting</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Gradient Boosting model, shown at the same dummy-column level as the notebook output.</p></div>
+            <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Model Interpretation</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Features Used Most by Gradient Boosting</h2><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Feature importance from the final Gradient Boosting model, shown at the same dummy-column level as the notebook output. All categories were retained during dummy encoding.</p></div>
             <div className="card-surface p-6"><BarList data={featureImportance} colors={["#34d399", "#60a5fa", "#a78bfa", "#fbbf24", "#fb923c", "#f87171"]} /></div>
           </section>
 
