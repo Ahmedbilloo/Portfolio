@@ -289,7 +289,7 @@ plt.show()`
   },
   {
     title: "07 · Random Forest",
-    description: "Fit the 500-tree Random Forest on the same training split and evaluate its predictions, probabilities, and feature importance.",
+    description: "Fit the 300-tree Random Forest on the same training split and evaluate its predictions, probabilities, and feature importance.",
     code: `rf = RandomForestClassifier(
     n_estimators=300,
     random_state=1,
