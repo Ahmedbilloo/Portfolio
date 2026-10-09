@@ -63,8 +63,8 @@ export const projects: ProjectSummary[] = [
     category: "Machine Learning",
     description:
       "Developed and evaluated loan default prediction models using feature engineering and Random Forest classification to identify high-risk borrowers and support credit risk assessment.",
-    tech: ["Python", "Scikit-learn", "Pandas", "Machine Learning"],
-    codeUrl: "https://github.com/ahmedbilloo",
+    tech: ["Python", "Scikit-learn", "Pandas", "XGBoost", "Machine Learning"],
+    codeUrl: "https://github.com/Ahmedbilloo/Portfolio/blob/main/notebooks/cardiovascular-disease-risk-prediction.ipynb",
   },
   {
     slug: "cardiovascular-risk-prediction",
@@ -72,7 +72,7 @@ export const projects: ProjectSummary[] = [
     title: "Cardiovascular Disease Risk Prediction",
     category: "Machine Learning",
     description:
-      "Built and evaluated Logistic Regression, Random Forest, and SVM models for cardiovascular disease risk prediction using feature engineering and performance-based model selection.",
+      "Compared Logistic Regression, Decision Tree, Random Forest, Gradient Boosting and XGBoost on 68,205 processed patient records, with model evaluation and a data dictionary.",
     tech: ["Python", "Scikit-learn", "Pandas", "Machine Learning"],
     codeUrl: "https://github.com/ahmedbilloo",
   },
