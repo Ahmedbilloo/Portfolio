@@ -1,7 +1,8 @@
 import fs from "node:fs";
+import { gunzipSync } from "node:zlib";
 import path from "node:path";
 
-export type TreeNode = { left: number; right: number; feature: number; threshold: number; p1: number };
+export type TreeNode = [number, number, number, number, number];
 export type CardioModel = {
   format_version: number;
   model: string;
@@ -20,7 +21,7 @@ export type CardioModel = {
 
 export function getCardioModel(): CardioModel | null {
   try {
-    return JSON.parse(fs.readFileSync(path.join(process.cwd(), "src", "data", "cardiovascular-rf-model.json"), "utf8")) as CardioModel;
+    return JSON.parse(gunzipSync(fs.readFileSync(path.join(process.cwd(), "src", "data", "cardiovascular-rf-model.json.gz"))).toString("utf8")) as CardioModel;
   } catch {
     return null;
   }
@@ -48,12 +49,12 @@ export function predictCardioProbability(model: CardioModel, input: Record<strin
   for (const tree of model.trees) {
     let nodeIndex = 0;
     let guard = 0;
-    while (tree[nodeIndex] && tree[nodeIndex].feature >= 0 && guard < tree.length) {
+    while (tree[nodeIndex] && tree[nodeIndex][2] >= 0 && guard < tree.length) {
       const node = tree[nodeIndex];
-      nodeIndex = row[node.feature] <= node.threshold ? node.left : node.right;
+      nodeIndex = row[node[2]] <= node[3] ? node[0] : node[1];
       guard += 1;
     }
-    sum += tree[nodeIndex]?.p1 ?? 0;
+    sum += tree[nodeIndex]?.[4] ?? 0;
   }
   return model.trees.length ? sum / model.trees.length : 0;
 }
