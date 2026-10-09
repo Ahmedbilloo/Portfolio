@@ -1,8 +1,7 @@
 import fs from "node:fs";
-import { gunzipSync } from "node:zlib";
 import path from "node:path";
+import { gunzipSync } from "node:zlib";
 
-export type TreeNode = [number, number, number, number, number];
 export type CardioModel = {
   format_version: number;
   model: string;
@@ -16,12 +15,18 @@ export type CardioModel = {
   test_roc_auc: number;
   test_brier_score: number;
   feature_importances: Record<string, number>;
-  trees: TreeNode[][];
+  tree_node_counts: number[];
+  tree_record_bytes: number;
+  treeBuffer: Buffer;
 };
 
 export function getCardioModel(): CardioModel | null {
   try {
-    return JSON.parse(gunzipSync(fs.readFileSync(path.join(process.cwd(), "src", "data", "cardiovascular-rf-model.json.gz"))).toString("utf8")) as CardioModel;
+    const base = path.join(process.cwd(), "src", "data");
+    const metadata = JSON.parse(fs.readFileSync(path.join(base, "cardiovascular-rf-metadata.json"), "utf8"));
+    const treeBuffer = gunzipSync(fs.readFileSync(path.join(base, "cardiovascular-rf-trees.bin.gz")));
+    if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 28) return null;
+    return { ...metadata, treeBuffer } as CardioModel;
   } catch {
     return null;
   }
@@ -45,18 +50,29 @@ export function predictCardioProbability(model: CardioModel, input: Record<strin
     else if (name.startsWith("smoke_")) encoded[name] = raw.smoke === Number(name.split("_")[1]) ? 1 : 0;
   }
   const row = model.encoded_feature_columns.map((name) => encoded[name] ?? 0);
+  const buffer = model.treeBuffer;
+  const recordBytes = model.tree_record_bytes;
+  let treeStart = 0;
   let sum = 0;
-  for (const tree of model.trees) {
-    let nodeIndex = 0;
+  for (const nodeCount of model.tree_node_counts) {
+    let localIndex = 0;
     let guard = 0;
-    while (tree[nodeIndex] && tree[nodeIndex][2] >= 0 && guard < tree.length) {
-      const node = tree[nodeIndex];
-      nodeIndex = row[node[2]] <= node[3] ? node[0] : node[1];
+    while (localIndex >= 0 && localIndex < nodeCount && guard <= nodeCount) {
+      const offset = (treeStart + localIndex) * recordBytes;
+      const left = buffer.readInt32LE(offset);
+      const right = buffer.readInt32LE(offset + 4);
+      const feature = buffer.readInt32LE(offset + 8);
+      if (feature < 0) {
+        sum += buffer.readDoubleLE(offset + 20);
+        break;
+      }
+      const threshold = buffer.readDoubleLE(offset + 12);
+      localIndex = row[feature] <= threshold ? left : right;
       guard += 1;
     }
-    sum += tree[nodeIndex]?.[4] ?? 0;
+    treeStart += nodeCount;
   }
-  return model.trees.length ? sum / model.trees.length : 0;
+  return model.tree_node_counts.length ? sum / model.tree_node_counts.length : 0;
 }
 
 export function validateCardioInput(input: Record<string, number | boolean>): string | null {
