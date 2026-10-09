@@ -223,63 +223,57 @@ export function ProjectDetailView({ slug }: { slug: string }) {
             </div>
           </section>
 
-          {/* Working Code Snippets Tab */}
-          <section className="space-y-4">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-primary">Code Artifacts</span>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-                Production Code &amp; Query Implementations
-              </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Examine the underlying SQL stored procedures and Python machine learning pipelines powering this project.
+          {/* Code section: match the tabbed code viewer used on the retail project */}
+          {slug === "cardiovascular-risk-prediction" ? (
+            <section id="code" className="scroll-mt-24 space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <Code2 className="size-5" />
+                <h2 className="text-2xl font-bold">Show Code</h2>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+                Selected Python used for the cardiovascular disease prediction analysis.
               </p>
-            </div>
-
-            {/* Code Tab Switcher */}
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-              <div className="flex flex-wrap gap-2">
-                {detail.codeSnippets.map((snippet, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveCodeIndex(idx)}
-                    className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-medium transition-all ${
-                      activeCodeIndex === idx
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "border border-border bg-card text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Code2 className="size-3.5" />
-                    <span>{snippet.title.split(":")[0]}</span>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setCodeViewerOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <Code2 className="size-3.5 text-primary" />
-                <span>View Full Python File</span>
-              </button>
-            </div>
-
-            {detail.codeSnippets[activeCodeIndex] && (
-              <div className="space-y-3">
-                <div className="rounded-lg border border-border/80 bg-surface/70 p-3 text-xs text-muted-foreground">
-                  <span className="font-semibold text-foreground">
-                    {detail.codeSnippets[activeCodeIndex].title}:{" "}
-                  </span>
-                  {detail.codeSnippets[activeCodeIndex].description}
+              <div className="overflow-hidden rounded-xl border border-border bg-card">
+                <div className="flex flex-wrap border-b border-border">
+                  {cardioCodeSnippets.map((snippet, index) => (
+                    <button key={snippet.title} type="button" onClick={() => setActiveCodeIndex(index)} className={`px-4 py-3 text-xs font-semibold ${activeCodeIndex === index ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
+                      {snippet.title}
+                    </button>
+                  ))}
                 </div>
-                <CodeBlock
-                  code={detail.codeSnippets[activeCodeIndex].code}
-                  language={detail.codeSnippets[activeCodeIndex].language}
-                  filename={detail.codeSnippets[activeCodeIndex].title}
-                />
+                <div className="p-5">
+                  <p className="mb-3 text-sm text-muted-foreground">{cardioCodeSnippets[activeCodeIndex].description}</p>
+                  <CodeBlock code={cardioCodeSnippets[activeCodeIndex].code} language="python" filename="cardiovascular_analysis.py" />
+                </div>
               </div>
-            )}
-          </section>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">Code Artifacts</span>
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">Production Code &amp; Query Implementations</h2>
+                <p className="mt-1 text-xs text-muted-foreground">Examine the underlying SQL stored procedures and Python machine learning pipelines powering this project.</p>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+                <div className="flex flex-wrap gap-2">
+                  {detail.codeSnippets.map((snippet, idx) => (
+                    <button key={idx} onClick={() => setActiveCodeIndex(idx)} className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-medium transition-all ${activeCodeIndex === idx ? "bg-primary text-primary-foreground shadow-xs" : "border border-border bg-card text-muted-foreground hover:text-foreground"}`}>
+                      <Code2 className="size-3.5" /><span>{snippet.title.split(":")[0]}</span>
+                    </button>
+                  ))}
+                </div>
+                <button type="button" onClick={() => setCodeViewerOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+                  <Code2 className="size-3.5 text-primary" /><span>View Full Python File</span>
+                </button>
+              </div>
+              {detail.codeSnippets[activeCodeIndex] && (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-border/80 bg-surface/70 p-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">{detail.codeSnippets[activeCodeIndex].title}: </span>{detail.codeSnippets[activeCodeIndex].description}</div>
+                  <CodeBlock code={detail.codeSnippets[activeCodeIndex].code} language={detail.codeSnippets[activeCodeIndex].language} filename={detail.codeSnippets[activeCodeIndex].title} />
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Model Benchmarking Table (If available) */}
           {detail.modelResults && (
