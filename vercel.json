@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/**/*.ts": {
-      "includeFiles": "src/data/cardiovascular-rf-*"
+      "includeFiles": "src/data/cardiovascular-rf-metadata.json",
+      "maxDuration": 60
     }
   },
   "rewrites": [
