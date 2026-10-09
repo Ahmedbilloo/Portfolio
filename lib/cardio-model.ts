@@ -20,16 +20,54 @@ export type CardioModel = {
   treeBuffer: Buffer;
 };
 
-export function getCardioModel(): CardioModel | null {
+export type CardioModelMetadata = Omit<CardioModel, "treeBuffer">;
+
+export function getCardioModelMetadata(): CardioModelMetadata | null {
   try {
     const base = path.join(process.cwd(), "src", "data");
     const metadata = JSON.parse(fs.readFileSync(path.join(base, "cardiovascular-rf-metadata.json"), "utf8"));
-    const treeBuffer = gunzipSync(fs.readFileSync(path.join(base, "cardiovascular-rf-trees.bin.gz")));
     if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 13) return null;
-    return { ...metadata, treeBuffer } as CardioModel;
+    return metadata as CardioModelMetadata;
   } catch {
     return null;
   }
+}
+
+/**
+ * The fitted forest is a large binary artifact. Fetch it from the public source
+ * repository instead of bundling it into each Vercel function, which can exceed
+ * serverless deployment package limits. Cache it in the warm function instance.
+ */
+let cachedModel: CardioModel | null = null;
+let modelPromise: Promise<CardioModel | null> | null = null;
+
+export async function getCardioModel(): Promise<CardioModel | null> {
+  if (cachedModel) return cachedModel;
+  if (modelPromise) return modelPromise;
+
+  modelPromise = (async () => {
+    try {
+      const metadata = getCardioModelMetadata();
+      if (!metadata) return null;
+
+      const url = "https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/src/data/cardiovascular-rf-trees.bin.gz";
+      const response = await fetch(url, { headers: { "Accept": "application/octet-stream" } });
+      if (!response.ok) return null;
+      const compressed = Buffer.from(await response.arrayBuffer());
+      const treeBuffer = gunzipSync(compressed);
+      const expectedBytes = metadata.tree_node_counts.reduce((sum, count) => sum + count, 0) * metadata.tree_record_bytes;
+      if (treeBuffer.byteLength !== expectedBytes) return null;
+
+      cachedModel = { ...metadata, treeBuffer } as CardioModel;
+      return cachedModel;
+    } catch {
+      return null;
+    } finally {
+      modelPromise = null;
+    }
+  })();
+
+  return modelPromise;
 }
 
 export function predictCardioProbability(model: CardioModel, input: Record<string, number | boolean>): number {
