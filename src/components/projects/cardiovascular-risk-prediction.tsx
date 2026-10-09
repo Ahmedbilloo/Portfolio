@@ -83,6 +83,31 @@ export function CardiovascularRiskPrediction() {
         </header>
 
         <div className="container-page space-y-12 py-10 sm:py-14">
+          <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+            <div className="card-surface p-6 sm:p-7">
+              <span className="eyebrow">Project Overview</span>
+              <h2 className="mt-2 text-xl font-bold">From patient data to model evaluation</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                This project examines whether demographic, clinical measurements and lifestyle indicators can help classify recorded cardiovascular disease status in a processed patient dataset. I reviewed 68,205 records, documented the dataset’s 17 fields, checked derived and duplicate variables, prepared categorical predictors, and compared five classification algorithms using a stratified 80/20 train-test split.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Random Forest achieved the strongest overall results in the recorded test run, with 73.03% accuracy and a ROC-AUC of 0.7975. The notebook and data dictionary make the workflow and variables easier to review and reproduce.
+              </p>
+            </div>
+            <div className="card-surface p-6 sm:p-7">
+              <h3 className="font-semibold">What this project demonstrates</h3>
+              <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                <li>• Exploratory data analysis and feature preparation</li>
+                <li>• Side-by-side evaluation of five machine learning classifiers</li>
+                <li>• Interpretation of model metrics and feature importance</li>
+                <li>• Clear documentation through a notebook and data dictionary</li>
+              </ul>
+              <p className="mt-4 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
+                This is an educational portfolio project using observational data, not a clinically validated diagnostic or treatment tool.
+              </p>
+            </div>
+          </section>
+
           <section>
             <div className="mb-5 flex items-center gap-2"><Activity className="size-5 text-primary" /><h2 className="text-xl font-bold">Project at a Glance</h2></div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
