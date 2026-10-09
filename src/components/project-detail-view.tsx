@@ -158,23 +158,25 @@ export function ProjectDetailView({ slug }: { slug: string }) {
               ))}
             </div>
 
-            {/* Actions */}
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setCodeViewerOpen(true)}
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <Code2 className="size-4" /> View Python Code
-              </button>
-              <Link
-                to="/"
-                hash="contact"
-                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-opacity hover:opacity-90"
-              >
-                Inquire About This Work <ArrowRight className="size-3.5" />
-              </Link>
-            </div>
+            {/* Keep hero actions on other project pages, but omit them from the cardiovascular page. */}
+            {slug !== "cardiovascular-risk-prediction" && (
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCodeViewerOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  <Code2 className="size-4" /> View Python Code
+                </button>
+                <Link
+                  to="/"
+                  hash="contact"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-opacity hover:opacity-90"
+                >
+                  Inquire About This Work <ArrowRight className="size-3.5" />
+                </Link>
+              </div>
+            )}
           </div>
         </header>
 
