@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+  <title id="title">Cardiovascular risk analytics</title>
+  <desc id="desc">A clean healthcare analytics illustration featuring a heart and ECG waveform alongside model performance bars and patient data cards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1730"/>
+      <stop offset="1" stop-color="#173c65"/>
+    </linearGradient>
+    <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" rx="30" fill="url(#bg)"/>
+  <circle cx="1050" cy="100" r="170" fill="#2c5c8c" opacity=".24"/>
+  <circle cx="80" cy="700" r="210" fill="#1c7893" opacity=".13"/>
+  <g opacity=".14" stroke="#9bc8ee" stroke-width="1">
+    <path d="M80 120H1120M80 180H1120M80 240H1120M80 300H1120M80 360H1120M80 420H1120M80 480H1120M80 540H1120M80 600H1120"/>
+    <path d="M140 80V660M220 80V660M300 80V660M380 80V660M460 80V660M540 80V660M620 80V660M700 80V660M780 80V660M860 80V660M940 80V660M1020 80V660"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" fill="#f8fafc">
+    <text x="80" y="95" font-size="24" font-weight="600" letter-spacing="3" fill="#8bd5e8">HEALTHCARE ANALYTICS</text>
+    <text x="80" y="150" font-size="43" font-weight="700">Cardiovascular Risk</text>
+    <text x="80" y="198" font-size="43" font-weight="700">Prediction</text>
+    <text x="80" y="238" font-size="20" fill="#c0d3e8">Machine learning · Model comparison · Patient data</text>
+  </g>
+  <rect x="80" y="280" width="485" height="300" rx="22" fill="#f8fbff" opacity=".97"/>
+  <text x="112" y="323" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700" fill="#172b4d">Clinical signal overview</text>
+  <g transform="translate(115 365)">
+    <path d="M0 80H58L80 80L101 42L125 124L151 3L178 80H225L245 57L263 80H350" fill="none" stroke="#0e7490" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M0 80H58L80 80L101 42L125 124L151 3L178 80H225L245 57L263 80H350" fill="none" stroke="#67e8f9" stroke-width="12" opacity=".2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(280 485)">
+    <path d="M0 22C-48 -10 -78 -40 -58 -70C-39 -98 -7 -86 0 -59C8 -86 40 -98 59 -70C79 -40 48 -10 0 22Z" fill="url(#heart)"/>
+    <path d="M-46 -46H-22L-9 -62L5 -27L20 -52H45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <rect x="605" y="280" width="515" height="300" rx="22" fill="#f8fbff" opacity=".97"/>
+  <text x="640" y="323" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700" fill="#172b4d">Model evaluation</text>
+  <text x="640" y="355" font-family="Inter, Arial, sans-serif" font-size="14" fill="#60718b">Held-out test accuracy</text>
+  <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#344563">
+    <text x="640" y="398">Logistic Regression</text><text x="1070" y="398" text-anchor="end" font-weight="700">72.61%</text>
+    <text x="640" y="442">Decision Tree</text><text x="1070" y="442" text-anchor="end" font-weight="700">72.76%</text>
+    <text x="640" y="486">Random Forest</text><text x="1070" y="486" text-anchor="end" font-weight="700" fill="#0e7490">73.03%</text>
+    <text x="640" y="530">Gradient Boosting / XGBoost</text>
+  </g>
+  <g>
+    <rect x="640" y="407" width="405" height="8" rx="4" fill="#dbe5f0"/><rect x="640" y="407" width="294" height="8" rx="4" fill="#77a9cc"/>
+    <rect x="640" y="451" width="405" height="8" rx="4" fill="#dbe5f0"/><rect x="640" y="451" width="295" height="8" rx="4" fill="#77a9cc"/>
+    <rect x="640" y="495" width="405" height="8" rx="4" fill="#dbe5f0"/><rect x="640" y="495" width="298" height="8" rx="4" fill="#0e7490"/>
+    <rect x="640" y="539" width="405" height="8" rx="4" fill="#dbe5f0"/><rect x="640" y="539" width="293" height="8" rx="4" fill="#77a9cc"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" fill="#f8fafc">
+    <text x="82" y="650" font-size="22" font-weight="700">68,205 records</text>
+    <text x="82" y="681" font-size="15" fill="#c0d3e8">5 classifiers compared on a stratified test split</text>
+    <rect x="890" y="625" width="230" height="54" rx="27" fill="#0e7490"/>
+    <text x="1005" y="659" font-size="17" font-weight="700" text-anchor="middle">ROC-AUC  0.7975</text>
+  </g>
+</svg>
