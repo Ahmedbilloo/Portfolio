@@ -84,6 +84,14 @@ export function CardiovascularRiskPrediction() {
         </header>
 
         <div className="container-page space-y-12 py-10 sm:py-14">
+          <section id="introduction" className="max-w-4xl">
+            <span className="eyebrow">Introduction</span>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight">Predicting Cardiovascular Disease Risk with Machine Learning</h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Cardiovascular disease is a major public-health concern, and machine learning can help explore patterns in patient health data. In this project, I analyzed 68,205 patient records and compared five classification models—Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and XGBoost—to assess how demographic, clinical, and lifestyle variables relate to recorded cardiovascular disease status. I evaluated model performance using accuracy, precision, recall, F1-score, and ROC-AUC, and examined feature importance to better understand the variables influencing predictions. Random Forest delivered the strongest overall results in the recorded evaluation, with 73.03% accuracy and a ROC-AUC of 0.7975. This is an exploratory portfolio project using observational data, not a clinically validated diagnostic tool.
+            </p>
+          </section>
+
           <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
             <div className="card-surface p-6 sm:p-7">
               <span className="eyebrow">Project Overview</span>
