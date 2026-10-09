@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import gzip
 import subprocess
 import pandas as pd
 import kagglehub
@@ -8,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, brier_score_loss
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "src" / "data" / "cardiovascular-rf-model.json"
+OUT = ROOT / "src" / "data" / "cardiovascular-rf-model.json.gz"
 
 dataset_path = Path(kagglehub.dataset_download("colewelkins/cardiovascular-disease"))
 csv_matches = list(dataset_path.rglob("cardio_data_processed.csv"))
@@ -50,13 +51,14 @@ for estimator in model.estimators_:
     for i in range(tree.node_count):
         values = tree.value[i][0].tolist()
         total = sum(values)
-        nodes.append({
-            "left": int(tree.children_left[i]),
-            "right": int(tree.children_right[i]),
-            "feature": int(tree.feature[i]),
-            "threshold": float(tree.threshold[i]),
-            "p1": float(values[1] / total) if total else 0.0,
-        })
+        # Positional node tuple: [left, right, split feature, threshold, class-1 probability].
+        nodes.append([
+            int(tree.children_left[i]),
+            int(tree.children_right[i]),
+            int(tree.feature[i]),
+            round(float(tree.threshold[i]), 8),
+            round(float(values[1] / total), 8) if total else 0.0,
+        ])
     trees.append(nodes)
 
 payload = {
@@ -83,5 +85,6 @@ payload = {
     "trees": trees,
 }
 OUT.parent.mkdir(parents=True, exist_ok=True)
-OUT.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
-print(f"Wrote {OUT} ({OUT.stat().st_size:,} bytes)")
+compressed = gzip.compress(json.dumps(payload, separators=(",", ":")).encode("utf-8"), compresslevel=9, mtime=0)
+OUT.write_bytes(compressed)
+print(f"Wrote compressed model artifact {OUT} ({OUT.stat().st_size:,} bytes)")
