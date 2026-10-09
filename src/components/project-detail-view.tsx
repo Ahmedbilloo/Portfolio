@@ -25,7 +25,7 @@ import { projects } from "@/data/site";
 import { BiForecastInteractive } from "@/components/projects/bi-forecast-interactive";
 import { LoanDefaultInteractive } from "@/components/projects/loan-default-interactive";
 import { CardioRiskInteractive } from "@/components/projects/cardio-risk-interactive";
-import { cardioCodeSnippets } from "@/components/projects/cardiovascular-risk-prediction";
+import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 
 export function ProjectDetailView({ slug }: { slug: string }) {
   const detail: ProjectDetail | undefined = projectDetails[slug] || projectDetails["business-intelligence-forecasting"];
@@ -224,29 +224,21 @@ export function ProjectDetailView({ slug }: { slug: string }) {
             </div>
           </section>
 
-          {/* Code section: match the tabbed code viewer used on the retail project */}
+          {/* Complete source code for the cardiovascular project */}
           {slug === "cardiovascular-risk-prediction" ? (
             <section id="code" className="scroll-mt-24 space-y-4">
               <div className="flex items-center gap-2 text-primary">
                 <Code2 className="size-5" />
                 <h2 className="text-2xl font-bold">Show Code</h2>
               </div>
-              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                Selected Python used for the cardiovascular disease prediction analysis.
+              <p className="max-w-3xl text-sm text-muted-foreground">
+                Complete Python source for the full cardiovascular disease analysis, including all five trained models, hyperparameter tuning, model evaluation, ROC curves, confusion matrices, and feature importance.
               </p>
-              <div className="overflow-hidden rounded-xl border border-border bg-card">
-                <div className="flex flex-wrap border-b border-border">
-                  {cardioCodeSnippets.map((snippet, index) => (
-                    <button key={snippet.title} type="button" onClick={() => setActiveCodeIndex(index)} className={`px-4 py-3 text-xs font-semibold ${activeCodeIndex === index ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
-                      {snippet.title}
-                    </button>
-                  ))}
-                </div>
-                <div className="p-5">
-                  <p className="mb-3 text-sm text-muted-foreground">{cardioCodeSnippets[activeCodeIndex].description}</p>
-                  <CodeBlock code={cardioCodeSnippets[activeCodeIndex].code} language="python" filename="cardiovascular_analysis.py" />
-                </div>
-              </div>
+              <CodeBlock
+                code={cardiovascularNotebookCode}
+                language="python"
+                filename="cardiovascular-disease-risk-prediction.py"
+              />
             </section>
           ) : (
             <section className="space-y-4">
