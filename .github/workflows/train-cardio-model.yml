@@ -41,7 +41,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/cardiovascular-rf-model.json
+          git add src/data/cardiovascular-rf-model.json.gz
           if git diff --cached --quiet; then
             echo "Model artifact is unchanged."
           else
