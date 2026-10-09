@@ -277,17 +277,17 @@ export function ProjectDetailView({ slug }: { slug: string }) {
                   The complete notebook source is organized into the main analysis stages. Select any section to view and copy all of its code.
                 </p>
               </div>
-              <div className="flex flex-row flex-wrap items-start gap-2 border-b border-border pb-5">
+              <div className="grid grid-cols-2 items-start gap-2 border-b border-border pb-5">
                 {cardiovascularCodeSections.map((section, index) => (
                   <button
                     key={section.title}
                     type="button"
                     onClick={() => setActiveCodeIndex(index)}
                     aria-pressed={activeCodeIndex === index}
-                    className={`!w-auto max-w-full shrink-0 inline-flex items-center justify-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors sm:px-4 ${activeCodeIndex === index ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+                    className={`flex w-full min-w-0 items-center justify-start gap-2 rounded-xl border px-2.5 py-3 text-left text-sm font-medium transition-colors sm:px-4 ${activeCodeIndex === index ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground"}`}
                   >
                     <Code2 className="size-4 shrink-0" />
-                    <span className="whitespace-nowrap">{section.title}</span>
+                    <span className="min-w-0">{section.title}</span>
                   </button>
                 ))}
               </div>
