@@ -226,34 +226,6 @@ export function ProjectDetailView({ slug }: { slug: string }) {
             {slug === "cardiovascular-risk-prediction" && <CardioRiskInteractive />}
           </section>
 
-          {/* Business Problem & Challenges */}
-          <section className="grid gap-8 lg:grid-cols-2">
-            <div className="card-surface p-7">
-              <div className="flex items-center gap-2 text-primary">
-                <Briefcase className="size-5" />
-                <h2 className="text-lg font-bold tracking-tight text-foreground">The Business Challenge</h2>
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                {detail.problemStatement}
-              </p>
-            </div>
-
-            <div className="card-surface p-7">
-              <div className="flex items-center gap-2 text-amber-500">
-                <Layers className="size-5" />
-                <h2 className="text-lg font-bold tracking-tight text-foreground">Key Technical Constraints</h2>
-              </div>
-              <ul className="mt-4 space-y-3">
-                {detail.keyChallenges.map((challenge, i) => (
-                  <li key={i} className="flex gap-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-                    <span>{challenge}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
           {/* Solution & Step-by-Step Methodology */}
           <section className="space-y-6">
             <div>
