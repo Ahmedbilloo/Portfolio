@@ -6,7 +6,7 @@ import { CodeBlock } from "@/components/code-block";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
-const cardioCodeSnippets = [
+export const cardioCodeSnippets = [
   {
     title: "01 · Data Loading",
     description: "Load the processed cardiovascular dataset and inspect the first records.",
