@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { X, Copy, Check, FileCode } from "lucide-react";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
+import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 
 interface PythonCodeFile {
   filename: string;
