@@ -88,7 +88,7 @@ export function CardiovascularRiskPrediction() {
             <span className="eyebrow">Introduction</span>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">Predicting Cardiovascular Disease Risk</h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              I analyzed health data from over 68,000 people to explore how machine learning can help identify patterns linked to cardiovascular disease.
+              Cardiovascular disease is a major health concern, and understanding the factors linked to it can help us better assess risk. In this project, I explored health records from more than 68,000 people, looking at factors such as age, blood pressure, cholesterol, and lifestyle, and compared different computer models to see how well they could identify patterns associated with cardiovascular disease.
             </p>
           </section>
 
