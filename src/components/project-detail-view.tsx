@@ -25,6 +25,7 @@ import { projects } from "@/data/site";
 import { BiForecastInteractive } from "@/components/projects/bi-forecast-interactive";
 import { LoanDefaultInteractive } from "@/components/projects/loan-default-interactive";
 import { CardioRiskInteractive } from "@/components/projects/cardio-risk-interactive";
+import { CardiovascularRocChart } from "@/components/projects/cardiovascular-roc-chart";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 
 
@@ -411,6 +412,8 @@ export function ProjectDetailView({ slug }: { slug: string }) {
               </div>
             </section>
           )}
+
+          {slug === "cardiovascular-risk-prediction" && <CardiovascularRocChart />}
 
           {/* Business Impact & ROI Cards */}
           <section className="space-y-4">
