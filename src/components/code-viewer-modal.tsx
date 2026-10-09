@@ -608,66 +608,34 @@ def build_and_evaluate_credit_pipeline(csv_path: str):
     }`,
   },
 
-  "cardiovascular-risk-prediction": {
-    filename: "cardio_model_training.py",
+    "cardiovascular-risk-prediction": {
+    filename: "cardiovascular_disease_risk_prediction.ipynb",
     projectName: "Cardiovascular Disease Risk Prediction",
-    description: "Clinical Biometric Risk Modeling with Hemodynamic Biomarkers and Recall Calibration",
-    code: `"""
-Cardiovascular Disease Risk Modeling
-Dataset: 70,000 Patient Records
-Author: Ahmed Billoo
-"""
+    description: "Notebook workflow for exploratory analysis, five classifier comparisons, model evaluation, and XGBoost feature importance",
+    code: `# Prepare target and predictors
+y = data["cardio"]
+features = [
+    "age_years", "gender", "height", "weight", "ap_hi", "ap_lo",
+    "cholesterol", "gluc", "smoke", "alco", "active", "bmi",
+    "bp_category"
+]
+X = pd.get_dummies(
+    data[features].copy(),
+    columns=["gender", "cholesterol", "gluc", "smoke", "alco", "active", "bp_category"],
+    dtype=int
+)
 
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import RobustScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score, recall_score, precision_score, f1_score
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.20, random_state=1, stratify=y
+)
 
-def train_cardiovascular_models(df: pd.DataFrame):
-    df = df[(df['ap_hi'] >= 80) & (df['ap_hi'] <= 220)].copy()
-    df = df[(df['ap_lo'] >= 50) & (df['ap_lo'] <= 140)].copy()
-    df = df[df['ap_hi'] > df['ap_lo']].copy()
+# Evaluate predicted probabilities for the positive class
+rf.fit(train_X, train_y)
+rf_predictions = rf.predict(test_X)
+rf_probabilities = rf.predict_proba(test_X)[:, 1]
 
-    df['age_years'] = df['age'] / 365.25
-    df['bmi'] = df['weight'] / ((df['height'] / 100.0) ** 2)
-    df['map'] = df['ap_lo'] + (df['ap_hi'] - df['ap_lo']) / 3.0
-    df['pulse_pressure'] = df['ap_hi'] - df['ap_lo']
-
-    features = [
-        'age_years', 'gender', 'ap_hi', 'ap_lo', 'map', 'pulse_pressure',
-        'bmi', 'cholesterol', 'gluc', 'smoke', 'alco', 'active'
-    ]
-
-    X = df[features]
-    y = df['cardio']
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=42, stratify=y
-    )
-
-    scaler = RobustScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
-    model = RandomForestClassifier(
-        n_estimators=250, max_depth=10, min_samples_leaf=4,
-        random_state=42, n_jobs=-1
-    )
-    model.fit(X_train_scaled, y_train)
-
-    probabilities = model.predict_proba(X_test_scaled)[:, 1]
-    predictions = (probabilities >= 0.42).astype(int)
-
-    return {
-        "roc_auc": roc_auc_score(y_test, probabilities),
-        "recall": recall_score(y_test, predictions),
-        "precision": precision_score(y_test, predictions),
-        "f1": f1_score(y_test, predictions),
-        "model": model,
-        "scaler": scaler
-    }`,
+print("Accuracy:", accuracy_score(test_y, rf_predictions))
+print("ROC-AUC:", roc_auc_score(test_y, rf_probabilities))`,
   },
 };
 
