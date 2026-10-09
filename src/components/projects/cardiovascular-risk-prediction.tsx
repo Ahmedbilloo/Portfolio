@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 import { ArrowLeft, ExternalLink, FileText, Database, Activity, BrainCircuit } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
@@ -150,6 +151,29 @@ export function CardiovascularRiskPrediction() {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">The following are the top feature importance values reported by XGBoost in the notebook. These are relative model importance scores, not causal effects or individual disease probabilities.</p>
             <div className="mt-5 space-y-4">
               {xgbImportance.map(([label, value]) => <div key={label}><div className="mb-1 flex items-center justify-between gap-4 text-sm"><span>{label}</span><span className="tabular-nums text-muted-foreground">{Number(value).toFixed(2)}%</span></div><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: Number(value) + "%" }} /></div></div>)}
+            </div>
+          </section>
+
+          <section id="code">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <span className="eyebrow">Notebook Source</span>
+                <h2 className="mt-2 text-xl font-bold">Complete Python Notebook Code</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                  The full source from the Jupyter notebook is shown below, including the exploratory analysis, data preparation, all five classification models, evaluation, and feature-importance workflow. Notebook Markdown cells are preserved as comments for readability.
+                </p>
+              </div>
+              <a href="https://github.com/Ahmedbilloo/Portfolio/blob/main/notebooks/cardiovascular-disease-risk-prediction.ipynb" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium hover:bg-accent">
+                Open original notebook <ExternalLink className="size-3.5" />
+              </a>
+            </div>
+            <div className="mt-5 max-h-[620px] overflow-auto rounded-xl border border-border bg-[#0d1117] p-4 sm:p-5">
+              <pre className="min-w-max font-mono text-[11px] leading-5 text-[#c9d1d9] sm:text-xs">{cardiovascularNotebookCode.split("\n").map((line, index) => (
+                <div key={index} className="flex">
+                  <span className="mr-4 inline-block w-8 shrink-0 select-none text-right text-[#484f58]">{index + 1}</span>
+                  <code>{line || " "}</code>
+                </div>
+              ))}</pre>
             </div>
           </section>
 
