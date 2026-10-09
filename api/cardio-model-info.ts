@@ -1,9 +1,9 @@
-import { getCardioModel } from "../lib/cardio-model";
+import { getCardioModelMetadata } from "../lib/cardio-model";
 
 export default function handler(_req: any, res: any) {
-  const model = getCardioModel();
+  const model = getCardioModelMetadata();
   if (!model) {
-    res.status(503).json({ error: "The fitted cardiovascular model is not available yet." });
+    res.status(503).json({ error: "The fitted cardiovascular model metadata is not available." });
     return;
   }
   res.status(200).json({
