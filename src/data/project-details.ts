@@ -592,7 +592,7 @@ def build_credit_risk_pipeline(data_path: str):
     to: "/projects/cardiovascular-risk-prediction",
     title: "Cardiovascular Disease Risk Prediction",
     category: "Healthcare Analytics & Predictive Modeling",
-    tagline: "Comparing Five Classification Models on Patient Demographic, Clinical and Lifestyle Data",
+    tagline: "This project explores the use of machine learning to predict cardiovascular disease risk using patient health data. Five classification models were developed and compared to evaluate their predictive performance and identify the most effective approach.",
     summary:
       "Analyzed 68,205 processed patient records and compared Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and XGBoost to predict recorded cardiovascular disease status. The project includes exploratory analysis, a data dictionary, model evaluation, and feature importance review.",
     role: "Data Analyst & Machine Learning Practitioner",
