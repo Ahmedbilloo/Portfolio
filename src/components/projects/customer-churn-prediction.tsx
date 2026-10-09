@@ -701,8 +701,8 @@ export function CustomerChurnPrediction() {
 
           <section className="space-y-5">
             <div><span className="text-xs font-semibold uppercase tracking-wider text-primary">Code</span><h2 className="mt-1 text-2xl font-bold tracking-tight">Python Implementation</h2><p className="mt-2 text-sm text-muted-foreground">The code below follows the notebook workflow and is organized into the main analysis stages.</p></div>
-            <div className="flex flex-wrap gap-2 border-b border-border pb-3">
-              {codeSnippets.map((snippet, index) => <button key={snippet.title} type="button" onClick={() => setActiveCode(index)} className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-medium ${activeCode === index ? "bg-primary text-primary-foreground" : "border border-border bg-card text-muted-foreground hover:text-foreground"}`}><Code2 className="size-3.5" /> {snippet.title}</button>)}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "0.5rem" }} className="border-b border-border pb-3">
+              {codeSnippets.map((snippet, index) => <button key={snippet.title} type="button" onClick={() => setActiveCode(index)} aria-pressed={activeCode === index} style={{ width: "100%", minWidth: 0, justifyContent: "flex-start" }} className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left text-xs font-medium sm:px-3.5 ${activeCode === index ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:text-foreground"}`}><Code2 className="size-3.5 shrink-0" /><span>{snippet.title}</span></button>)}
             </div>
             <div className="rounded-lg border border-border bg-surface/70 p-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">{codeSnippets[activeCode].title}: </span>{codeSnippets[activeCode].description}</div>
             <CodeBlock code={codeSnippets[activeCode].code} language="python" filename="churn_analysis.py" />
