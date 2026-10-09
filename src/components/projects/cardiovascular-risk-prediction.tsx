@@ -88,7 +88,7 @@ export function CardiovascularRiskPrediction() {
             <span className="eyebrow">Introduction</span>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">Predicting Cardiovascular Disease Risk</h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              This project uses machine learning to predict cardiovascular disease risk from patient health data. I analyzed 68,205 records and compared five classification models using accuracy, precision, recall, F1-score, and ROC-AUC to identify the best-performing approach.
+              Heart disease affects millions of people, and identifying patterns in health data may help us better understand the factors linked to it. In this project, I analyzed health information from more than 68,000 people and compared five computer models to see how well they could identify people with cardiovascular disease. I also explored which health factors were most closely associated with the predictions. The goal was to find a useful approach to understanding heart disease risk—not to create a tool for medical diagnosis.
             </p>
           </section>
 
