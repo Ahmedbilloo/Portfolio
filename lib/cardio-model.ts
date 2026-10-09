@@ -25,7 +25,7 @@ export function getCardioModel(): CardioModel | null {
     const base = path.join(process.cwd(), "src", "data");
     const metadata = JSON.parse(fs.readFileSync(path.join(base, "cardiovascular-rf-metadata.json"), "utf8"));
     const treeBuffer = gunzipSync(fs.readFileSync(path.join(base, "cardiovascular-rf-trees.bin.gz")));
-    if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 28) return null;
+    if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 13) return null;
     return { ...metadata, treeBuffer } as CardioModel;
   } catch {
     return null;
@@ -59,14 +59,14 @@ export function predictCardioProbability(model: CardioModel, input: Record<strin
     let guard = 0;
     while (localIndex >= 0 && localIndex < nodeCount && guard <= nodeCount) {
       const offset = (treeStart + localIndex) * recordBytes;
-      const left = buffer.readInt32LE(offset);
-      const right = buffer.readInt32LE(offset + 4);
-      const feature = buffer.readInt32LE(offset + 8);
+      const left = buffer.readUInt16LE(offset);
+      const right = buffer.readUInt16LE(offset + 2);
+      const feature = buffer.readInt8(offset + 4);
       if (feature < 0) {
-        sum += buffer.readDoubleLE(offset + 20);
+        sum += buffer.readFloatLE(offset + 9);
         break;
       }
-      const threshold = buffer.readDoubleLE(offset + 12);
+      const threshold = buffer.readFloatLE(offset + 5);
       localIndex = row[feature] <= threshold ? left : right;
       guard += 1;
     }
