@@ -25,6 +25,7 @@ import { projects } from "@/data/site";
 import { BiForecastInteractive } from "@/components/projects/bi-forecast-interactive";
 import { LoanDefaultInteractive } from "@/components/projects/loan-default-interactive";
 import { CardioRiskInteractive } from "@/components/projects/cardio-risk-interactive";
+import { cardioCodeSnippets } from "@/components/projects/cardiovascular-risk-prediction";
 
 export function ProjectDetailView({ slug }: { slug: string }) {
   const detail: ProjectDetail | undefined = projectDetails[slug] || projectDetails["business-intelligence-forecasting"];
