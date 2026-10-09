@@ -8,7 +8,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import { HeartPulse, Activity, AlertCircle, CheckCircle2, Sliders, Stethoscope } from "lucide-react";
+import { HeartPulse, AlertCircle, CheckCircle2, Sliders, Stethoscope } from "lucide-react";
 
 type ModelInfo = {
   model: string;
