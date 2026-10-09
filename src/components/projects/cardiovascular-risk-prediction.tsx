@@ -1,8 +1,96 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
-import { ArrowLeft, ExternalLink, FileText, Database, Activity, BrainCircuit } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, Database, Activity, BrainCircuit, Code2 } from "lucide-react";
+import { CodeBlock } from "@/components/code-block";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+
+const cardioCodeSnippets = [
+  {
+    title: "01 · Data Loading",
+    description: "Load the processed cardiovascular dataset and inspect the first records.",
+    code: `from pathlib import Path
+import pandas as pd
+import kagglehub
+
+dataset_path = Path(kagglehub.dataset_download("colewelkins/cardiovascular-disease"))
+csv_path = next(dataset_path.rglob("cardio_data_processed.csv"))
+data = pd.read_csv(csv_path)
+
+print("Dataset shape:", data.shape)
+display(data.head())`,
+  },
+  {
+    title: "02 · Data Quality Audit",
+    description: "Review column types, missing values, duplicate rows, and summary statistics.",
+    code: `data.info()
+display(data.isna().sum().to_frame("Missing values"))
+print("Duplicate rows:", data.duplicated().sum())
+display(data.describe(include="all").T)`,
+  },
+  {
+    title: "03 · Exploratory Analysis",
+    description: "Compare recorded disease rates across cholesterol categories and other health indicators.",
+    code: `cholesterol_rates = pd.crosstab(
+    data["cholesterol"], data["cardio"], normalize="index"
+).mul(100)
+cholesterol_rates.columns = ["No Disease", "Disease"]
+display(cholesterol_rates.round(2))`,
+  },
+  {
+    title: "04 · Feature Engineering",
+    description: "Choose health-related predictors and encode categorical variables for modeling.",
+    code: `y = data["cardio"]
+features = [
+    "age_years", "gender", "height", "weight", "ap_hi", "ap_lo",
+    "cholesterol", "gluc", "smoke", "alco", "active", "bmi",
+    "bp_category"
+]
+X = data[features].copy()
+categorical_features = X.select_dtypes(include="object").columns
+X = pd.get_dummies(X, columns=categorical_features, drop_first=True)`,
+  },
+  {
+    title: "05 · Model Training",
+    description: "Train a Random Forest classifier on the training dataset.",
+    code: `from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(
+    n_estimators=500,
+    min_samples_split=10,
+    min_samples_leaf=10,
+    random_state=1,
+    n_jobs=-1
+)
+rf.fit(train_X, train_y)
+rf_pred = rf.predict(test_X)`,
+  },
+  {
+    title: "06 · Model Evaluation",
+    description: "Compare predictions using common classification measures.",
+    code: `from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
+results = {
+    "Accuracy": accuracy_score(test_y, rf_pred),
+    "Precision": precision_score(test_y, rf_pred),
+    "Recall": recall_score(test_y, rf_pred),
+    "F1 score": f1_score(test_y, rf_pred),
+    "ROC AUC": roc_auc_score(test_y, rf.predict_proba(test_X)[:, 1]),
+}
+print(results)`,
+  },
+  {
+    title: "07 · Feature Importance",
+    description: "Rank the variables that contributed most to the fitted XGBoost model.",
+    code: `xgb_importance = pd.DataFrame({
+    "Feature": train_X.columns,
+    "Importance": xgb.feature_importances_
+}).sort_values("Importance", ascending=False)
+
+display(xgb_importance.head(15))`,
+  },
+];
 
 const metrics = [
   { model: "Logistic Regression", accuracy: 72.61, precision: 75.74, recall: 65.50, f1: 70.25, auc: 0.7911 },
@@ -48,6 +136,7 @@ const xgbImportance = [
 ];
 
 export function CardiovascularRiskPrediction() {
+  const [activeCode, setActiveCode] = useState(0);
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
       <SiteNav />
@@ -162,29 +251,6 @@ export function CardiovascularRiskPrediction() {
             </div>
           </section>
 
-          <section id="code">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <span className="eyebrow">Notebook Source</span>
-                <h2 className="mt-2 text-xl font-bold">Complete Python Notebook Code</h2>
-                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                  The full source from the Jupyter notebook is shown below, including the exploratory analysis, data preparation, all five classification models, evaluation, and feature-importance workflow. Notebook Markdown cells are preserved as comments for readability.
-                </p>
-              </div>
-              <a href="https://github.com/Ahmedbilloo/Portfolio/blob/main/notebooks/cardiovascular-disease-risk-prediction.ipynb" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium hover:bg-accent">
-                Open original notebook <ExternalLink className="size-3.5" />
-              </a>
-            </div>
-            <div className="mt-5 max-h-[620px] overflow-auto rounded-xl border border-border bg-[#0d1117] p-4 sm:p-5">
-              <pre className="min-w-max font-mono text-[11px] leading-5 text-[#c9d1d9] sm:text-xs">{cardiovascularNotebookCode.split("\n").map((line, index) => (
-                <div key={index} className="flex">
-                  <span className="mr-4 inline-block w-8 shrink-0 select-none text-right text-[#484f58]">{index + 1}</span>
-                  <code>{line || " "}</code>
-                </div>
-              ))}</pre>
-            </div>
-          </section>
-
           <section>
             <h2 className="text-xl font-bold">Data Dictionary</h2>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">All 17 columns in the processed dataset are documented below, including the derived variables and their role in the analysis.</p>
@@ -204,6 +270,37 @@ export function CardiovascularRiskPrediction() {
               <li>The data is observational and reflects recorded disease status. Feature importance does not establish causation.</li>
               <li>This is a portfolio and learning project, not a validated clinical tool. It should not be used to diagnose patients or guide treatment.</li>
             </ul>
+          </section>
+
+          <section id="code" className="scroll-mt-24">
+            <div className="flex items-center gap-2 text-primary">
+              <Code2 className="size-5" />
+              <h2 className="text-2xl font-bold">Show Code</h2>
+            </div>
+            <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+              Selected Python from the cardiovascular disease prediction analysis. Choose a step to explore how the data was prepared, analyzed, and modeled.
+            </p>
+            <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
+              <div className="flex flex-wrap border-b border-border">
+                {cardioCodeSnippets.map((snippet, index) => (
+                  <button key={snippet.title} type="button" onClick={() => setActiveCode(index)} className={`px-4 py-3 text-xs font-semibold ${activeCode === index ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
+                    {snippet.title}
+                  </button>
+                ))}
+              </div>
+              <div className="p-5">
+                <p className="mb-3 text-sm text-muted-foreground">{cardioCodeSnippets[activeCode].description}</p>
+                <CodeBlock code={cardioCodeSnippets[activeCode].code} language="python" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <details className="rounded-xl border border-border bg-card p-4">
+                <summary className="cursor-pointer text-sm font-semibold">View complete cleaned Python source</summary>
+                <div className="mt-4 max-h-[620px] overflow-auto rounded-xl bg-[#0d1117] p-4">
+                  <pre className="min-w-max font-mono text-xs leading-5 text-[#c9d1d9]">{cardiovascularNotebookCode}</pre>
+                </div>
+              </details>
+            </div>
           </section>
         </div>
       </main>
