@@ -88,7 +88,7 @@ export function CardiovascularRiskPrediction() {
             <span className="eyebrow">Introduction</span>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">Predicting Cardiovascular Disease Risk</h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Cardiovascular disease is a major health concern, and understanding the factors linked to it can help us better assess risk. In this project, I explored health records from more than 68,000 people, looking at factors such as age, blood pressure, cholesterol, and lifestyle, and compared different computer models to see how well they could identify patterns associated with cardiovascular disease.
+              This project explores the use of machine learning to predict cardiovascular disease risk using patient health data. Five classification models were developed and compared to evaluate their predictive performance and identify the most effective approach.
             </p>
           </section>
 
