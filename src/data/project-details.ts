@@ -587,281 +587,141 @@ def build_credit_risk_pipeline(data_path: str):
     ],
   },
 
-  "cardiovascular-risk-prediction": {
+    "cardiovascular-risk-prediction": {
     slug: "cardiovascular-risk-prediction",
     to: "/projects/cardiovascular-risk-prediction",
     title: "Cardiovascular Disease Risk Prediction",
     category: "Healthcare Analytics & Predictive Modeling",
-    tagline: "Early Clinical Screening and Diagnostic Risk Modeling with Comparative Machine Learning Benchmarking",
+    tagline: "Comparing Five Classification Models on Patient Demographic, Clinical and Lifestyle Data",
     summary:
-      "Developed and evaluated medical predictive models on a 70,000-patient cardiovascular health dataset. Engineered clinical biometric features including Mean Arterial Pressure and Pulse Pressure, and benchmarked Logistic Regression, Random Forest, and Support Vector Machines, achieving an 88.4% high-sensitivity recall to minimize missed diagnoses in preventive healthcare.",
-    role: "Health Data Analyst & Predictive Modeler",
-    timeline: "Aug 2024 – Oct 2024 (2.5 Months)",
-    tools: ["Python", "Scikit-Learn", "Pandas", "NumPy", "Seaborn", "Statsmodels", "ROC/PR Analysis"],
-    githubUrl: "https://github.com/ahmedbilloo",
+      "Analyzed 68,205 processed patient records and compared Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and XGBoost to predict recorded cardiovascular disease status. The project includes exploratory analysis, a data dictionary, model evaluation, and feature importance review.",
+    role: "Data Analyst & Machine Learning Practitioner",
+    timeline: "Portfolio Project",
+    tools: ["Python", "Pandas", "Scikit-Learn", "XGBoost", "Matplotlib", "Seaborn"],
+    githubUrl: "https://github.com/Ahmedbilloo/Portfolio",
     metrics: [
       {
-        label: "Clinical Recall (Sensitivity)",
-        value: "88.4%",
-        change: "Minimizes false negatives",
-        description: "Identifies patients with cardiovascular disease for urgent preventive clinical intervention",
+        label: "Best Test Accuracy",
+        value: "73.03%",
+        change: "Random Forest",
+        description: "Accuracy on the stratified held-out test set in the recorded notebook run.",
       },
       {
-        label: "ROC-AUC Score",
-        value: "0.871",
-        change: "+0.118 vs standard cutoff",
-        description: "Discriminative ability across multi-biomarker risk thresholds",
+        label: "Best ROC-AUC",
+        value: "0.7975",
+        change: "Random Forest",
+        description: "Area under the ROC curve on the held-out test set.",
       },
       {
-        label: "Patient Cohort Analyzed",
-        value: "70,000",
-        change: "Standardized EHR records",
-        description: "Multi-hospital electronic health records with biometric and lifestyle indicators",
+        label: "Records Analyzed",
+        value: "68,205",
+        change: "Processed dataset",
+        description: "Patient records with demographic, clinical, lifestyle, and derived variables.",
       },
       {
-        label: "Model Precision",
-        value: "79.2%",
-        change: "Low false alarm rate",
-        description: "Ensures clinical resources focus on true elevated-risk patients",
+        label: "Models Compared",
+        value: "5",
+        change: "Common test set",
+        description: "Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and XGBoost.",
       },
     ],
     problemStatement:
-      "Cardiovascular disease remains the leading cause of preventable mortality globally. In outpatient clinical settings, physicians must assess multiple complex biometric signals—systolic and diastolic blood pressures, serum cholesterol, glucose, body mass index, and lifestyle habits. Manual clinical risk guidelines often fail to capture subtle multi-variable compounding effects, leading to missed early interventions in asymptomatic patients.",
+      "The project investigates whether demographic, blood pressure, cholesterol, glucose, body mass index, and lifestyle variables contain useful patterns for classifying recorded cardiovascular disease status in a processed patient dataset.",
     keyChallenges: [
-      "Crucial need for high diagnostic sensitivity (Recall): False Negatives (missing a diseased patient) carry severe clinical consequences.",
-      "Significant physiological measurement noise and outliers in ambulatory blood pressure readings.",
-      "Complex non-linear interactions between age, pulse pressure, and metabolic markers.",
-      "Requirement for transparent clinical risk factor contributions to assist physician decision-making.",
+      "Reviewing duplicated and derived fields before model preparation.",
+      "Encoding categorical variables consistently across the candidate classifiers.",
+      "Comparing models using multiple evaluation metrics rather than accuracy alone.",
+      "Avoiding clinical or causal conclusions from observational data and feature importance scores.",
     ],
     solutionOverview:
-      "Implemented a comprehensive health predictive modeling architecture: (1) Robust medical data cleaning with physiological plausibility range checks; (2) Clinical feature engineering deriving Mean Arterial Pressure (MAP), Pulse Pressure, and BMI categories; (3) Comparative modeling across Logistic Regression (interpretable odds ratios), Support Vector Machines with RBF kernel, and Random Forest; (4) Probability calibration to produce accurate 5-year risk scores; and (5) An interactive clinical decision-support calculator for physician workflows.",
+      "Loaded and reviewed the processed dataset, performed exploratory analysis, documented all 17 variables, prepared a stratified 80/20 train-test split, and compared five classifiers. Logistic Regression used standardized predictors; tree-based models used the encoded features without standardization. Evaluation covered accuracy, precision, recall, F1 score, ROC-AUC, and ROC curve comparison.",
     methodologySteps: [
       {
         step: "01",
-        title: "Physiological Data Cleaning & Range Validation",
-        description: "Filtered noisy electronic medical records using clinical biometric boundaries.",
+        title: "Data Review and Exploration",
+        description: "Inspected dataset structure, category frequencies, summary statistics, and target balance.",
         details: [
-          "Trimmed implausible systolic blood pressures outside [70, 240 mmHg] and diastolic outside [40, 150 mmHg].",
-          "Converted patient age from recorded days to precise fractional years and verified BMI calculations.",
+          "Analyzed 68,205 rows and 17 original or derived columns.",
+          "Compared disease rates across cholesterol, blood pressure category, physical activity, and smoking status.",
         ],
       },
       {
         step: "02",
-        title: "Cardiovascular Feature Engineering",
-        description: "Calculated hemodynamic and metabolic indices proven in cardiology literature.",
+        title: "Data Dictionary and Feature Preparation",
+        description: "Documented variables and prepared the predictors for classification.",
         details: [
-          "Engineered Mean Arterial Pressure (MAP) = Diastolic BP + 1/3 * (Systolic BP - Diastolic BP).",
-          "Engineered Pulse Pressure = Systolic BP - Diastolic BP as a marker for arterial stiffness.",
-          "Created combined Metabolic Risk Index integrating elevated glucose, cholesterol tier, and smoking status.",
+          "Excluded the record identifier, used age_years instead of age, and excluded the duplicate bp_category_encoded field.",
+          "One-hot encoded categorical variables and used a stratified 80/20 split with random_state=1.",
         ],
       },
       {
         step: "03",
-        title: "Comparative Model Training & Cross-Validation",
-        description: "Trained and benchmarked linear and ensemble classifiers using 5-fold Stratified K-Fold validation.",
+        title: "Classification Models",
+        description: "Compared five models using the same training and test partitions.",
         details: [
-          "Applied RobustScaler to handle heavy-tailed biometric distributions without distorting clinical extremes.",
-          "Random Forest Classifier emerged as top performer with 0.871 ROC-AUC and 88.4% recall at 0.42 decision threshold.",
+          "Evaluated Logistic Regression, a cross-validated Decision Tree, Random Forest, Gradient Boosting, and XGBoost.",
+          "Standardized predictors for Logistic Regression; tree-based models were trained without scaling.",
         ],
       },
       {
         step: "04",
-        title: "Clinical Risk Stratification & Interpretability",
-        description: "Structured patient outputs into clear clinical risk tiers: Low (<15%), Moderate (15-40%), and High (>40%).",
+        title: "Evaluation and Interpretation",
+        description: "Compared predictive metrics and reviewed feature importance.",
         details: [
-          "Extracted feature odds ratios: Systolic Blood Pressure and Age contributed over 52% of total risk variance.",
-          "Constructed actionable diagnostic summaries highlighting modifiable lifestyle risk factors vs. non-modifiable baseline risk.",
+          "Random Forest recorded the highest test accuracy (73.03%), F1 score (71.45%), and ROC-AUC (0.7975) in the notebook run.",
+          "Systolic blood pressure and cholesterol categories ranked prominently in the recorded XGBoost feature importance output; importance is not evidence of causation.",
         ],
       },
     ],
     codeSnippets: [
       {
-        title: "Python Clinical Modeling: Feature Engineering & Multi-Model Evaluation",
+        title: "Notebook: Cardiovascular Disease Classification",
         language: "python",
         description:
-          "Prepares clinical biometric dataset, constructs derived cardiovascular indicators, and trains benchmark classifiers.",
-        code: `import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.preprocessing import StandardScaler, RobustScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.metrics import roc_auc_score, recall_score, precision_score, f1_score
+          "The complete notebook contains data loading, the 17-variable data dictionary, exploratory analysis, model training, evaluation metrics, and ROC curve comparison.",
+        code: `# Target and candidate predictors
+y = data["cardio"]
 
-def train_cardio_models(df: pd.DataFrame):
-    # Data Cleaning: Plausible physiological ranges
-    df = df[(df['ap_hi'] >= 80) & (df['ap_hi'] <= 220)]
-    df = df[(df['ap_lo'] >= 50) & (df['ap_lo'] <= 140)]
-    df = df[df['ap_hi'] > df['ap_lo']] # Systolic must exceed diastolic
-    
-    # Clinical Feature Engineering
-    df['age_years'] = df['age'] / 365.25
-    df['bmi'] = df['weight'] / ((df['height'] / 100) ** 2)
-    # Mean Arterial Pressure (MAP)
-    df['map'] = df['ap_lo'] + (df['ap_hi'] - df['ap_lo']) / 3.0
-    # Pulse Pressure (Arterial stiffness)
-    df['pulse_pressure'] = df['ap_hi'] - df['ap_lo']
-    
-    feature_cols = [
-        'age_years', 'gender', 'ap_hi', 'ap_lo', 'map', 'pulse_pressure',
-        'bmi', 'cholesterol', 'gluc', 'smoke', 'alco', 'active'
-    ]
-    X = df[feature_cols]
-    y = df['cardio'] # 1 = CVD present, 0 = absent
-    
-    # Train-test split (80/20 stratified)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-    
-    scaler = RobustScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    
-    # Model 1: Logistic Regression (Interpretable baseline)
-    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42)
-    lr.fit(X_train_scaled, y_train)
-    
-    # Model 2: Random Forest Classifier (Optimized for non-linear interactions)
-    rf = RandomForestClassifier(
-        n_estimators=250,
-        max_depth=10,
-        min_samples_leaf=4,
-        random_state=42,
-        n_jobs=-1
-    )
-    rf.fit(X_train_scaled, y_train)
-    
-    # Probability prediction and high-sensitivity threshold tuning
-    rf_probas = rf.predict_proba(X_test_scaled)[:, 1]
-    clinical_threshold = 0.42 # Tuned to prioritize recall in medical screening
-    rf_preds = (rf_probas >= clinical_threshold).astype(int)
-    
-    print("=== Random Forest Cardiovascular Model ===")
-    print(f"ROC-AUC: {roc_auc_score(y_test, rf_probas):.4f}")
-    print(f"Recall (Sensitivity): {recall_score(y_test, rf_preds):.4f}")
-    print(f"Precision: {precision_score(y_test, rf_preds):.4f}")
-    print(f"F1-Score: {f1_score(y_test, rf_preds):.4f}")
-    
-    return rf, scaler, feature_cols`,
-      },
-      {
-        title: "Clinical Risk Stratification Scoring Engine",
-        language: "python",
-        description:
-          "Maps machine learning output probabilities into actionable medical triage categories.",
-        code: `def get_clinical_risk_category(risk_prob: float) -> dict:
-    """
-    Converts raw prediction probability into clinical guidance tier.
-    """
-    if risk_prob < 0.20:
-        return {
-            "tier": "Low Risk",
-            "badge_color": "emerald",
-            "action": "Routine annual wellness checkup. Maintain physical exercise."
-        }
-    elif risk_prob < 0.45:
-        return {
-            "tier": "Moderate Risk",
-            "badge_color": "amber",
-            "action": "Schedule 6-month lipid panel & lifestyle counseling."
-        }
-    else:
-        return {
-            "tier": "High Risk (Immediate Attention)",
-            "badge_color": "rose",
-            "action": "Urgent cardiology referral, 24h ambulatory BP monitor & statin review."
-        }`,
-      },
-    ],
-    modelResults: [
-      {
-        model: "Logistic Regression (L2 Regularized)",
-        accuracy: "73.4%",
-        precision: "74.8%",
-        recall: "71.2%",
-        f1Score: "72.9%",
-        rocAuc: "0.796",
-        notes: "Provided clear odds ratios: each 10 mmHg increase in systolic BP raised CVD odds by 34%.",
-      },
-      {
-        model: "Support Vector Machine (RBF Kernel)",
-        accuracy: "75.1%",
-        precision: "76.4%",
-        recall: "73.8%",
-        f1Score: "75.1%",
-        rocAuc: "0.822",
-        notes: "Effective boundary separation; high computational complexity on 70k instances.",
-      },
-      {
-        model: "Random Forest Classifier (Selected)",
-        accuracy: "78.9%",
-        precision: "79.2%",
-        recall: "88.4%",
-        f1Score: "83.5%",
-        rocAuc: "0.871",
-        notes: "Tuned at 0.42 threshold to maximize clinical sensitivity (88.4% recall) with robust precision.",
-      },
-    ],
-    featureImportance: [
-      {
-        feature: "Systolic Blood Pressure (ap_hi)",
-        importance: 32.8,
-        description: "Primary hemodynamic indicator. Systolic pressure >140 mmHg strongly correlates with vascular damage.",
-      },
-      {
-        feature: "Patient Age (Years)",
-        importance: 22.4,
-        description: "Natural biological vessel stiffness and accumulated lifestyle risk exposure over time.",
-      },
-      {
-        feature: "Cholesterol Tier",
-        importance: 14.5,
-        description: "Serum lipid levels categorized as Normal, Above Normal, or Well Above Normal.",
-      },
-      {
-        feature: "Pulse Pressure (ap_hi - ap_lo)",
-        importance: 11.2,
-        description: "Derived arterial compliance index measuring pulsatile stress on coronary vessels.",
-      },
-      {
-        feature: "Body Mass Index (BMI)",
-        importance: 9.6,
-        description: "Weight-to-height ratio reflecting metabolic load and visceral adiposity.",
-      },
-      {
-        feature: "Glucose Level",
-        importance: 5.7,
-        description: "Blood sugar tier indicating pre-diabetic vascular inflammation risk.",
-      },
-      {
-        feature: "Smoking Status",
-        importance: 3.8,
-        description: "Active tobacco usage accelerating endothelial dysfunction.",
+features = [
+    "age_years", "gender", "height", "weight", "ap_hi", "ap_lo",
+    "cholesterol", "gluc", "smoke", "alco", "active", "bmi",
+    "bp_category"
+]
+
+X = data[features].copy()
+categorical_features = [
+    "gender", "cholesterol", "gluc", "smoke", "alco", "active",
+    "bp_category"
+]
+X = pd.get_dummies(X, columns=categorical_features, dtype=int)
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.20, random_state=1, stratify=y
+)`,
       },
     ],
     businessImpact: [
       {
-        title: "Early Diagnostic Screening",
-        metric: "88.4% Sensitivity",
-        detail: "Significantly reduces missed cardiovascular diagnoses during standard outpatient health screenings.",
+        title: "Model Comparison",
+        metric: "5 Classifiers",
+        detail: "The same held-out test set and multiple metrics were used to compare baseline, single-tree, and ensemble approaches.",
       },
       {
-        title: "Preventive Triage Efficiency",
-        metric: "40% Faster Assessment",
-        detail: "Automated biometric ingestion allows triage nurses to flag at-risk patients prior to physician consultation.",
+        title: "Model Transparency",
+        metric: "Data Dictionary + Feature Importance",
+        detail: "Documented source and derived variables and reviewed the features most used by the XGBoost model.",
       },
       {
-        title: "Targeted Preventive Care",
-        metric: "Custom Action Plans",
-        detail: "Provides transparent feature contribution breakdown to guide patient lifestyle coaching and medication adherence.",
+        title: "Responsible Interpretation",
+        metric: "Exploratory Only",
+        detail: "Results are presented as an educational prediction exercise, not as a validated clinical screening or diagnostic system.",
       },
     ],
     keyLearnings: [
-      "In medical diagnostic AI, standard 0.5 classification thresholds must be adjusted to prioritize Recall over pure Accuracy to protect patient outcomes.",
-      "Derived clinical metrics like Mean Arterial Pressure and Pulse Pressure add substantial predictive lift over raw blood pressure values alone.",
-      "Physician adoption requires intuitive visual risk tiers rather than abstract mathematical probabilities.",
+      "Random Forest provided the strongest overall test metrics among the five recorded models, though differences were modest.",
+      "Accuracy alone does not fully describe classification performance; precision, recall, F1 score, and ROC-AUC provide complementary views.",
+      "Derived and duplicate columns should be identified and documented before modeling.",
+      "Associations and feature importance in observational data should not be interpreted as causal effects or clinical guidance.",
     ],
   },
 };
