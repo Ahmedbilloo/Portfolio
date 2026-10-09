@@ -1,7 +1,7 @@
 from pathlib import Path
-import json
 import gzip
-import subprocess
+import json
+import struct
 import pandas as pd
 import kagglehub
 from sklearn.model_selection import train_test_split
@@ -9,7 +9,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, brier_score_loss
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "src" / "data" / "cardiovascular-rf-model.json.gz"
+DATA_DIR = ROOT / "src" / "data"
+META_OUT = DATA_DIR / "cardiovascular-rf-metadata.json"
+TREES_OUT = DATA_DIR / "cardiovascular-rf-trees.bin.gz"
+OLD_OUT = DATA_DIR / "cardiovascular-rf-model.json.gz"
 
 dataset_path = Path(kagglehub.dataset_download("colewelkins/cardiovascular-disease"))
 csv_matches = list(dataset_path.rglob("cardio_data_processed.csv"))
@@ -37,32 +40,38 @@ model = RandomForestClassifier(
 )
 model.fit(train_X, train_y)
 probabilities = model.predict_proba(test_X)[:, 1]
+roc_auc = float(roc_auc_score(test_y, probabilities))
+brier = float(brier_score_loss(test_y, probabilities))
 print(f"Records: {len(data)}")
 print(f"Encoded features: {feature_columns}")
-print(f"Test ROC-AUC: {roc_auc_score(test_y, probabilities):.4f}")
-print(f"Test Brier score: {brier_score_loss(test_y, probabilities):.4f}")
+print(f"Test ROC-AUC: {roc_auc:.4f}")
+print(f"Test Brier score: {brier:.4f}")
 
-# Serialize the fitted sklearn forest to a compact, framework-independent JSON
-# format so the production Node server can run the exact fitted trees.
-trees = []
+# Store each node as a fixed-width binary record to avoid huge JS object graphs
+# in the serverless runtime. Record layout is little-endian <iiidd:
+# left child, right child, split feature, split threshold, class-1 probability.
+tree_bytes = bytearray()
+tree_node_counts = []
 for estimator in model.estimators_:
     tree = estimator.tree_
-    nodes = []
+    tree_node_counts.append(int(tree.node_count))
     for i in range(tree.node_count):
         values = tree.value[i][0].tolist()
         total = sum(values)
-        # Positional node tuple: [left, right, split feature, threshold, class-1 probability].
-        nodes.append([
+        p1 = float(values[1] / total) if total else 0.0
+        tree_bytes.extend(struct.pack(
+            "<iiidd",
             int(tree.children_left[i]),
             int(tree.children_right[i]),
             int(tree.feature[i]),
-            round(float(tree.threshold[i]), 8),
-            round(float(values[1] / total), 8) if total else 0.0,
-        ])
-    trees.append(nodes)
+            float(tree.threshold[i]),
+            p1,
+        ))
 
-payload = {
-    "format_version": 1,
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+TREES_OUT.write_bytes(gzip.compress(bytes(tree_bytes), compresslevel=6, mtime=0))
+metadata = {
+    "format_version": 2,
     "model": "RandomForestClassifier",
     "target": "cardio",
     "target_meaning": "recorded cardiovascular disease status (0 = no disease recorded, 1 = disease recorded)",
@@ -76,15 +85,17 @@ payload = {
         "random_state": 1,
     },
     "dataset_records": int(len(data)),
-    "test_roc_auc": float(roc_auc_score(test_y, probabilities)),
-    "test_brier_score": float(brier_score_loss(test_y, probabilities)),
+    "test_roc_auc": roc_auc,
+    "test_brier_score": brier,
     "feature_importances": {
         feature_columns[i]: float(value)
         for i, value in enumerate(model.feature_importances_)
     },
-    "trees": trees,
+    "tree_node_counts": tree_node_counts,
+    "tree_record_bytes": 28,
 }
-OUT.parent.mkdir(parents=True, exist_ok=True)
-compressed = gzip.compress(json.dumps(payload, separators=(",", ":")).encode("utf-8"), compresslevel=9, mtime=0)
-OUT.write_bytes(compressed)
-print(f"Wrote compressed model artifact {OUT} ({OUT.stat().st_size:,} bytes)")
+META_OUT.write_text(json.dumps(metadata, separators=(",", ":")), encoding="utf-8")
+# Remove the earlier JSON-tree export from the repository in the next commit.
+OLD_OUT.unlink(missing_ok=True)
+print(f"Wrote metadata {META_OUT} ({META_OUT.stat().st_size:,} bytes)")
+print(f"Wrote compressed binary trees {TREES_OUT} ({TREES_OUT.stat().st_size:,} bytes)")
