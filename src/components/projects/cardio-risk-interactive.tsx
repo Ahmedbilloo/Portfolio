@@ -112,21 +112,6 @@ export function CardioRiskInteractive() {
       .slice(0, 8);
   }, [modelInfo]);
 
-  const riskLabel = probability === null
-    ? "Waiting for model"
-    : probability < 0.35
-      ? "Lower predicted probability"
-      : probability < 0.55
-        ? "Intermediate predicted probability"
-        : "Higher predicted probability";
-  const riskColor = probability === null
-    ? "text-muted-foreground"
-    : probability < 0.35
-      ? "text-emerald-500"
-      : probability < 0.55
-        ? "text-amber-500"
-        : "text-rose-500";
-
   return (
     <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -223,13 +208,13 @@ export function CardioRiskInteractive() {
           <div className="flex flex-col justify-center rounded-xl border border-border bg-card p-5 shadow-sm">
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Model output</span>
-              {probability !== null && <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"><Activity className="size-3" />{riskLabel}</span>}
+
             </div>
             <div className="mt-8 text-center">
               <p className="text-xs text-muted-foreground">Predicted probability of recorded cardiovascular disease</p>
               <div className="mt-2">
                 {loading && probability === null ? <div className="text-2xl font-semibold text-muted-foreground">Calculating…</div> : (
-                  <span className={`text-5xl font-extrabold tracking-tight ${riskColor}`}>{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
+                  <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
                 )}
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">Probability from the fitted Random Forest; not a five-year forecast.</p>
