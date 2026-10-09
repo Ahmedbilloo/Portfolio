@@ -43,8 +43,11 @@ export function CardioRiskInteractive() {
     let cancelled = false;
     fetch("/api/cardio-model-info")
       .then(async (response) => {
-        if (!response.ok) throw new Error("The fitted model is not available on the live server yet.");
-        return response.json();
+        const text = await response.text();
+        let data: any;
+        try { data = JSON.parse(text); } catch { throw new Error(`Model information endpoint returned HTTP ${response.status} instead of JSON.`); }
+        if (!response.ok) throw new Error(data.error || `Model information failed (HTTP ${response.status}).`);
+        return data;
       })
       .then((data: ModelInfo) => { if (!cancelled) setModelInfo(data); })
       .catch((e: Error) => { if (!cancelled) setError(e.message); })
@@ -73,8 +76,10 @@ export function CardioRiskInteractive() {
       }),
     })
       .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Prediction failed.");
+        const text = await response.text();
+        let data: any;
+        try { data = JSON.parse(text); } catch { throw new Error(`Prediction endpoint returned HTTP ${response.status} instead of JSON. The server response could not be parsed.`); }
+        if (!response.ok) throw new Error(data.error || `Prediction failed (HTTP ${response.status}).`);
         return data;
       })
       .then((data: { probability: number }) => {
