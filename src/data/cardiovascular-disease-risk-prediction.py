@@ -1,22 +1,8 @@
-# Cardiovascular Disease Risk Prediction — complete notebook source
-#
-# Source: notebooks/cardiovascular-disease-risk-prediction.ipynb
-# This file preserves the notebook's Markdown and code-cell contents for display
-# in the portfolio code viewer. Notebook-specific commands such as %pip are
-# intended to be run in Jupyter, not as a standalone Python script.
+# Cardiovascular Disease Risk Prediction
+# Source code from the notebook's executable cells; Markdown and cell labels are omitted.
 
-# --- Markdown cell 1 ---
-# # Cardiovascular Disease Risk Prediction
-#
-# ## Objective
-# Explore demographic, clinical, and lifestyle variables associated with recorded cardiovascular disease status and compare five binary classifiers: Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and XGBoost.
-#
-# The target is `cardio`: 0 = no disease recorded; 1 = disease recorded. This is an educational predictive modeling project, not a clinical diagnostic tool.
-
-# --- Code cell 2 ---
 %pip install -q kagglehub xgboost
 
-# --- Code cell 3 ---
 import pandas as pd
 from IPython.display import display
 import numpy as np
@@ -39,12 +25,6 @@ from sklearn.metrics import (
 
 sns.set_theme(style="whitegrid")
 
-# --- Markdown cell 4 ---
-# ## Dataset and Data Dictionary
-#
-# The processed dataset contains 68,205 records and 17 columns. The complete variable descriptions, coding, and modeling roles are also available in [the standalone data dictionary](cardiovascular-data-dictionary.md).
-
-# --- Code cell 5 ---
 dataset_path = Path(kagglehub.dataset_download("colewelkins/cardiovascular-disease"))
 csv_matches = list(dataset_path.rglob("cardio_data_processed.csv"))
 if not csv_matches:
@@ -54,13 +34,11 @@ data = pd.read_csv(csv_matches[0])
 print("Dataset shape:", data.shape)
 display(data.head())
 
-# --- Code cell 6 ---
 data.info()
 display(data.isna().sum().to_frame("Missing values"))
 print("Duplicate rows:", data.duplicated().sum())
 display(data.describe(include="all").T)
 
-# --- Code cell 7 ---
 target_counts = data["cardio"].value_counts().sort_index()
 target_pct = data["cardio"].value_counts(normalize=True).sort_index().mul(100)
 display(pd.DataFrame({"Count": target_counts, "Percent": target_pct.round(2)}))
@@ -75,10 +53,6 @@ plt.xticks(rotation=0)
 plt.tight_layout()
 plt.show()
 
-# --- Markdown cell 8 ---
-# ## Exploratory Data Analysis
-
-# --- Code cell 9 ---
 # Disease rates by cholesterol category
 cholesterol_rates = pd.crosstab(data["cholesterol"], data["cardio"], normalize="index").mul(100)
 cholesterol_rates.columns = ["No Disease", "Disease"]
@@ -103,7 +77,6 @@ plt.xticks(rotation=25, ha="right")
 plt.tight_layout()
 plt.show()
 
-# --- Code cell 10 ---
 # Compare selected clinical averages by target class
 clinical_cols = ["age_years", "height", "weight", "bmi", "ap_hi", "ap_lo"]
 display(data.groupby("cardio")[clinical_cols].mean().round(2))
@@ -120,7 +93,6 @@ for ax, col, title in zip(
 plt.tight_layout()
 plt.show()
 
-# --- Code cell 11 ---
 # Disease rates by activity and smoking
 for col, title in [("active", "Physical Activity"), ("smoke", "Smoking Status")]:
     rates = pd.crosstab(data[col], data["cardio"], normalize="index").mul(100)
@@ -143,12 +115,6 @@ plt.title("Correlation Matrix for Numeric and Encoded Variables")
 plt.tight_layout()
 plt.show()
 
-# --- Markdown cell 12 ---
-# ## Feature Preparation
-#
-# The identifier is excluded. `age_years` replaces `age`, and the duplicate `bp_category_encoded` field is not used. Categorical variables are one-hot encoded. A stratified 80/20 split is used for all models.
-
-# --- Code cell 13 ---
 y = data["cardio"]
 
 features = [
@@ -172,12 +138,6 @@ print("Test set:", test_X.shape)
 print("Target distribution in training set:")
 display(train_y.value_counts(normalize=True).sort_index().mul(100).round(2))
 
-# --- Markdown cell 14 ---
-# ## Model 1: Logistic Regression
-#
-# Standardization is applied using training-set statistics only. Logistic Regression uses L1 regularization with cross-validation to select the regularization strength.
-
-# --- Code cell 15 ---
 scaler = StandardScaler()
 train_X_scaled = scaler.fit_transform(train_X)
 test_X_scaled = scaler.transform(test_X)
@@ -193,12 +153,6 @@ logit_probabilities = logit.predict_proba(test_X_scaled)[:, 1]
 print("Selected C:", logit.C_[0])
 print(classification_report(test_y, logit_pred, target_names=["No Disease", "Disease"]))
 
-# --- Markdown cell 16 ---
-# ## Model 2: Decision Tree
-#
-# Grid search uses three-fold cross-validation and ROC AUC as the selection metric.
-
-# --- Code cell 17 ---
 param_grid = {
     "max_depth": [5, 10, 20, 30],
     "min_samples_split": [20, 40, 60, 80, 100],
@@ -225,10 +179,6 @@ plt.title("Decision Tree (First Four Levels)")
 plt.tight_layout()
 plt.show()
 
-# --- Markdown cell 18 ---
-# ## Model 3: Random Forest
-
-# --- Code cell 19 ---
 rf = RandomForestClassifier(
     n_estimators=500, min_samples_split=10, min_samples_leaf=10,
     random_state=1, n_jobs=-1
@@ -238,10 +188,6 @@ rf_pred = rf.predict(test_X)
 rf_probabilities = rf.predict_proba(test_X)[:, 1]
 print(classification_report(test_y, rf_pred, target_names=["No Disease", "Disease"]))
 
-# --- Markdown cell 20 ---
-# ## Model 4: Gradient Boosting
-
-# --- Code cell 21 ---
 boost = GradientBoostingClassifier(
     n_estimators=500, learning_rate=0.5, random_state=1
 )
@@ -250,10 +196,6 @@ gb_pred = boost.predict(test_X)
 gb_probabilities = boost.predict_proba(test_X)[:, 1]
 print(classification_report(test_y, gb_pred, target_names=["No Disease", "Disease"]))
 
-# --- Markdown cell 22 ---
-# ## Model 5: XGBoost
-
-# --- Code cell 23 ---
 xgb = XGBClassifier(
     n_estimators=300, learning_rate=0.05, max_depth=10,
     random_state=1, eval_metric="logloss"
@@ -263,10 +205,6 @@ xgb_pred = xgb.predict(test_X)
 xgb_probabilities = xgb.predict_proba(test_X)[:, 1]
 print(classification_report(test_y, xgb_pred, target_names=["No Disease", "Disease"]))
 
-# --- Markdown cell 24 ---
-# ## Model Comparison
-
-# --- Code cell 25 ---
 model_predictions = {
     "Logistic Regression": (logit_pred, logit_probabilities),
     "Decision Tree": (tree_pred, tree_probabilities),
@@ -292,7 +230,6 @@ display(model_results.style.format({
     "F1 Score": "{:.2%}", "ROC-AUC": "{:.4f}"
 }))
 
-# --- Code cell 26 ---
 # ROC curves: every model uses the probability of class 1
 plt.figure(figsize=(8, 6))
 for name, (_, prob) in model_predictions.items():
@@ -307,7 +244,6 @@ plt.legend(loc="lower right")
 plt.tight_layout()
 plt.show()
 
-# --- Code cell 27 ---
 # Confusion matrices for all models
 fig, axes = plt.subplots(2, 3, figsize=(12, 8))
 for ax, (name, (pred, _)) in zip(axes.flat, model_predictions.items()):
@@ -321,12 +257,6 @@ for ax in axes.flat[len(model_predictions):]:
 plt.tight_layout()
 plt.show()
 
-# --- Markdown cell 28 ---
-# ## Feature Importance
-#
-# Tree-based feature importance shows which encoded variables the fitted model used most. It is a model-specific ranking and should not be interpreted as causal evidence.
-
-# --- Code cell 29 ---
 xgb_importance = pd.DataFrame({
     "Feature": train_X.columns,
     "Importance": xgb.feature_importances_
@@ -342,10 +272,3 @@ plt.xlabel("Importance")
 plt.ylabel("Feature")
 plt.tight_layout()
 plt.show()
-
-# --- Markdown cell 30 ---
-# ## Summary and Limitations
-#
-# Compare the classifiers across multiple metrics rather than accuracy alone. In the recorded run, Random Forest had the strongest test accuracy and ROC AUC among the five models, while Logistic Regression had the highest precision. Model differences were modest.
-#
-# The dataset is observational and the target reflects recorded disease status. Model associations and feature importance do not establish causation. This notebook is an educational portfolio project, not a validated clinical diagnostic tool, and should not be used to make medical decisions.
