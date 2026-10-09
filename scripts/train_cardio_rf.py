@@ -60,9 +60,9 @@ for estimator in model.estimators_:
         total = sum(values)
         p1 = float(values[1] / total) if total else 0.0
         tree_bytes.extend(struct.pack(
-            "<iiidd",
-            int(tree.children_left[i]),
-            int(tree.children_right[i]),
+            "<HHbff",
+            int(tree.children_left[i]) if tree.children_left[i] >= 0 else 65535,
+            int(tree.children_right[i]) if tree.children_right[i] >= 0 else 65535,
             int(tree.feature[i]),
             float(tree.threshold[i]),
             p1,
@@ -92,7 +92,7 @@ metadata = {
         for i, value in enumerate(model.feature_importances_)
     },
     "tree_node_counts": tree_node_counts,
-    "tree_record_bytes": 28,
+    "tree_record_bytes": 13,
 }
 META_OUT.write_text(json.dumps(metadata, separators=(",", ":")), encoding="utf-8")
 # Remove the earlier JSON-tree export from the repository in the next commit.
