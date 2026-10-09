@@ -117,22 +117,23 @@ plt.show()
 
 y = data["cardio"]
 
-features = [
-    "age_years", "gender", "height", "weight", "ap_hi", "ap_lo",
-    "cholesterol", "gluc", "smoke", "alco", "active", "bmi",
-    "bp_category"
+features_reduced = [
+    "age_years", "ap_hi", "ap_lo", "cholesterol",
+    "active", "weight", "height", "smoke"
 ]
-X = data[features].copy()
+categorical_features = ["cholesterol", "active", "smoke"]
 
-categorical_features = [
-    "gender", "cholesterol", "gluc", "smoke", "alco", "active",
-    "bp_category"
-]
-X = pd.get_dummies(X, columns=categorical_features, dtype=int)
+X_raw = data[features_reduced].copy()
+X = pd.get_dummies(X_raw, columns=categorical_features, dtype=int)
 
 train_X, test_X, train_y, test_y = train_test_split(
     X, y, test_size=0.20, random_state=1, stratify=y
 )
+feature_columns = train_X.columns.tolist()
+test_X = test_X.reindex(columns=feature_columns, fill_value=0)
+
+print("Reduced input features:", features_reduced)
+print("Encoded model features:", feature_columns)
 print("Training set:", train_X.shape)
 print("Test set:", test_X.shape)
 print("Target distribution in training set:")
@@ -180,13 +181,42 @@ plt.tight_layout()
 plt.show()
 
 rf = RandomForestClassifier(
-    n_estimators=500, min_samples_split=10, min_samples_leaf=10,
-    random_state=1, n_jobs=-1
+    n_estimators=500,
+    min_samples_split=10,
+    class_weight="balanced",
+    random_state=1,
+    n_jobs=-1
 )
 rf.fit(train_X, train_y)
 rf_pred = rf.predict(test_X)
 rf_probabilities = rf.predict_proba(test_X)[:, 1]
 print(classification_report(test_y, rf_pred, target_names=["No Disease", "Disease"]))
+print("Random Forest ROC-AUC:", round(roc_auc_score(test_y, rf_probabilities), 4))
+
+from sklearn.metrics import brier_score_loss
+import joblib
+import json
+
+print("Random Forest Brier score:", round(brier_score_loss(test_y, rf_probabilities), 4))
+
+# Export model and the exact one-hot encoded feature schema for app inference.
+joblib.dump(rf, "cardiovascular_rf_model.joblib")
+with open("cardiovascular_rf_metadata.json", "w", encoding="utf-8") as f:
+    json.dump({
+        "raw_features": features_reduced,
+        "categorical_features": categorical_features,
+        "encoded_feature_columns": feature_columns,
+        "target": "cardio",
+        "target_meaning": "recorded cardiovascular disease status (0/1)",
+        "model": "RandomForestClassifier",
+        "parameters": {
+            "n_estimators": 500,
+            "min_samples_split": 10,
+            "class_weight": "balanced",
+            "random_state": 1
+        }
+    }, f, indent=2)
+print("Exported cardiovascular_rf_model.joblib and cardiovascular_rf_metadata.json")
 
 boost = GradientBoostingClassifier(
     n_estimators=500, learning_rate=0.5, random_state=1
