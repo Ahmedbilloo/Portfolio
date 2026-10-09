@@ -61,7 +61,7 @@ export function CardiovascularRiskPrediction() {
               Cardiovascular Disease Risk Prediction
             </h1>
             <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-              An exploratory classification project comparing five machine learning models on patient demographic, clinical and lifestyle variables to predict recorded cardiovascular disease status.
+              An end-to-end exploratory machine learning study using 68,205 processed patient records to examine how demographic, clinical and lifestyle variables relate to recorded cardiovascular disease status. The project covers data review, feature preparation, model comparison and interpretation, with a documented data dictionary and transparent evaluation results.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {["Python", "Pandas", "Scikit-learn", "XGBoost", "Matplotlib", "Seaborn"].map((tool) => (
