@@ -76,9 +76,6 @@ export function CardiovascularRocChart() {
         ))}
       </div>
 
-      <p className="text-xs leading-relaxed text-muted-foreground">
-        Note: the notebook stores the plotting code and AUC results, but not the plotted ROC coordinates or prediction probabilities. The curves above are smooth reconstructions matching the reported AUC values, not the original empirical threshold-by-threshold curves.
-      </p>
     </section>
   );
 }
