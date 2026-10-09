@@ -27,6 +27,76 @@ import { LoanDefaultInteractive } from "@/components/projects/loan-default-inter
 import { CardioRiskInteractive } from "@/components/projects/cardio-risk-interactive";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 
+
+const cardiovascularCodeSectionDefinitions = [
+  {
+    title: "01 · Setup & Data Loading",
+    description: "Install and import the libraries, download the dataset, and load the processed cardiovascular records.",
+    marker: "# Cardiovascular Disease Risk Prediction",
+    filename: "01-setup-data-loading.py",
+  },
+  {
+    title: "02 · Data Quality",
+    description: "Inspect data types, missing values, duplicates, summary statistics, and the target distribution.",
+    marker: "data.info()",
+    filename: "02-data-quality.py",
+  },
+  {
+    title: "03 · Exploratory Analysis",
+    description: "Explore disease rates, clinical measurements, activity and smoking patterns, and correlations.",
+    marker: 'target_counts = data["cardio"].value_counts().sort_index()',
+    filename: "03-exploratory-analysis.py",
+  },
+  {
+    title: "04 · Feature Preparation",
+    description: "Select predictors, one-hot encode categorical variables, create a stratified train-test split, and scale features for Logistic Regression.",
+    marker: 'y = data["cardio"]',
+    filename: "04-feature-preparation.py",
+  },
+  {
+    title: "05 · Logistic Regression",
+    description: "Fit cross-validated L1-regularized Logistic Regression and evaluate its test predictions.",
+    marker: "logit = LogisticRegressionCV(",
+    filename: "05-logistic-regression.py",
+  },
+  {
+    title: "06 · Decision Tree",
+    description: "Tune the Decision Tree with GridSearchCV, review its best parameters, and visualize the fitted tree.",
+    marker: "param_grid = {",
+    filename: "06-decision-tree.py",
+  },
+  {
+    title: "07 · Random Forest",
+    description: "Train and evaluate the Random Forest classifier on the training and held-out test sets.",
+    marker: "rf = RandomForestClassifier(",
+    filename: "07-random-forest.py",
+  },
+  {
+    title: "08 · Gradient Boosting & XGBoost",
+    description: "Fit both boosting models and generate their predictions and class probabilities.",
+    marker: "boost = GradientBoostingClassifier(",
+    filename: "08-boosting-models.py",
+  },
+  {
+    title: "09 · Model Comparison",
+    description: "Compare all five models using accuracy, precision, recall, F1 and ROC-AUC; plot ROC curves and confusion matrices; inspect XGBoost feature importance.",
+    marker: "model_predictions = {",
+    filename: "09-model-comparison.py",
+  },
+] as const;
+
+const cardiovascularCodeSections = cardiovascularCodeSectionDefinitions.map((section, index, all) => {
+  const start = section.marker === "# Cardiovascular Disease Risk Prediction"
+    ? 0
+    : cardiovascularNotebookCode.indexOf(section.marker);
+  const nextSection = all[index + 1];
+  const end = nextSection ? cardiovascularNotebookCode.indexOf(nextSection.marker) : cardiovascularNotebookCode.length;
+  if (start < 0 || end < 0 || end <= start) {
+    return { ...section, code: cardiovascularNotebookCode };
+  }
+  return { ...section, code: cardiovascularNotebookCode.slice(start, end).trim() };
+});
+
 export function ProjectDetailView({ slug }: { slug: string }) {
   const detail: ProjectDetail | undefined = projectDetails[slug] || projectDetails["business-intelligence-forecasting"];
   const [activeCodeIndex, setActiveCodeIndex] = useState<number>(0);
@@ -224,20 +294,38 @@ export function ProjectDetailView({ slug }: { slug: string }) {
             </div>
           </section>
 
-          {/* Complete source code for the cardiovascular project */}
+          {/* Full cardiovascular notebook source, organized into navigable sections */}
           {slug === "cardiovascular-risk-prediction" ? (
-            <section id="code" className="scroll-mt-24 space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <Code2 className="size-5" />
-                <h2 className="text-2xl font-bold">Show Code</h2>
+            <section id="code" className="scroll-mt-24 space-y-5">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">Code</span>
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">Python Implementation</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                  The complete notebook source is organized into the main analysis stages. Select any section to view and copy all of its code.
+                </p>
               </div>
-              <p className="max-w-3xl text-sm text-muted-foreground">
-                Complete Python source for the full cardiovascular disease analysis, including all five trained models, hyperparameter tuning, model evaluation, ROC curves, confusion matrices, and feature importance.
-              </p>
+              <div className="flex flex-wrap gap-2 border-b border-border pb-5">
+                {cardiovascularCodeSections.map((section, index) => (
+                  <button
+                    key={section.title}
+                    type="button"
+                    onClick={() => setActiveCodeIndex(index)}
+                    aria-pressed={activeCodeIndex === index}
+                    className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors sm:px-4 ${activeCodeIndex === index ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+                  >
+                    <Code2 className="size-4 shrink-0" />
+                    <span>{section.title}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="rounded-xl border border-border bg-surface/70 p-4 text-sm leading-relaxed text-muted-foreground sm:p-5">
+                <span className="font-semibold text-foreground">{cardiovascularCodeSections[activeCodeIndex]?.title}: </span>
+                {cardiovascularCodeSections[activeCodeIndex]?.description}
+              </div>
               <CodeBlock
-                code={cardiovascularNotebookCode}
+                code={cardiovascularCodeSections[activeCodeIndex]?.code ?? cardiovascularNotebookCode}
                 language="python"
-                filename="cardiovascular-disease-risk-prediction.py"
+                filename={cardiovascularCodeSections[activeCodeIndex]?.filename ?? "cardiovascular-disease-risk-prediction.py"}
               />
             </section>
           ) : (
