@@ -89,7 +89,7 @@ export function CardiovascularRiskPrediction() {
               <span className="eyebrow">Project Overview</span>
               <h2 className="mt-2 text-xl font-bold">From patient data to model evaluation</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                This project examines whether demographic, clinical measurements and lifestyle indicators can help classify recorded cardiovascular disease status in a processed patient dataset. I reviewed 68,205 records, documented the dataset’s 17 fields, checked derived and duplicate variables, prepared categorical predictors, and compared five classification algorithms using a stratified 80/20 train-test split.
+                This project explores the use of machine learning to predict cardiovascular disease risk using patient health data. Using a dataset of 68,205 records, I developed and compared five classification models, evaluating their performance through accuracy, precision, recall, F1-score, and ROC-AUC. The project demonstrates the application of data analysis and machine learning techniques to healthcare data, with the aim of identifying an effective approach to cardiovascular risk prediction.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Random Forest achieved the strongest overall results in the recorded test run, with 73.03% accuracy and a ROC-AUC of 0.7975. The notebook and data dictionary make the workflow and variables easier to review and reproduce.
