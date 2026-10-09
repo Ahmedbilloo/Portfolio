@@ -62,7 +62,7 @@ export function CardiovascularRiskPrediction() {
               Cardiovascular Disease Risk Prediction
             </h1>
             <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-              This project explores the use of machine learning to predict cardiovascular disease risk using patient health data. Using a dataset of 68,205 records, I developed and compared five classification models, evaluating their performance through accuracy, precision, recall, F1-score, and ROC-AUC. The project demonstrates the application of data analysis and machine learning techniques to healthcare data, with the aim of identifying an effective approach to cardiovascular risk prediction.
+              This project explores the use of machine learning to predict cardiovascular disease risk using patient health data. Five classification models were developed and compared to evaluate their predictive performance and identify the most effective approach.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {["Python", "Pandas", "Scikit-learn", "XGBoost", "Matplotlib", "Seaborn"].map((tool) => (
