@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
 import { ArrowLeft, ExternalLink, FileText, Database, Activity, BrainCircuit, Code2 } from "lucide-react";
@@ -272,35 +271,19 @@ export function CardiovascularRiskPrediction() {
             </ul>
           </section>
 
-          <section id="code" className="scroll-mt-24">
+          <section id="code" className="scroll-mt-24 space-y-4">
             <div className="flex items-center gap-2 text-primary">
               <Code2 className="size-5" />
-              <h2 className="text-2xl font-bold">Show Code</h2>
+              <h2 className="text-2xl font-bold">Complete Python Code</h2>
             </div>
-            <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-              Selected Python from the cardiovascular disease prediction analysis. Choose a step to explore how the data was prepared, analyzed, and modeled.
+            <p className="max-w-3xl text-sm text-muted-foreground">
+              The complete Python source from the cardiovascular disease risk prediction notebook is shown below. Scroll through the full analysis or use Copy to copy the entire source.
             </p>
-            <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
-              <div className="flex flex-wrap border-b border-border">
-                {cardioCodeSnippets.map((snippet, index) => (
-                  <button key={snippet.title} type="button" onClick={() => setActiveCode(index)} className={`px-4 py-3 text-xs font-semibold ${activeCode === index ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
-                    {snippet.title}
-                  </button>
-                ))}
-              </div>
-              <div className="p-5">
-                <p className="mb-3 text-sm text-muted-foreground">{cardioCodeSnippets[activeCode].description}</p>
-                <CodeBlock code={cardioCodeSnippets[activeCode].code} language="python" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <details className="rounded-xl border border-border bg-card p-4">
-                <summary className="cursor-pointer text-sm font-semibold">View complete cleaned Python source</summary>
-                <div className="mt-4 max-h-[620px] overflow-auto rounded-xl bg-[#0d1117] p-4">
-                  <pre className="min-w-max font-mono text-xs leading-5 text-[#c9d1d9]">{cardiovascularNotebookCode}</pre>
-                </div>
-              </details>
-            </div>
+            <CodeBlock
+              code={cardiovascularNotebookCode}
+              language="python"
+              filename="cardiovascular-disease-risk-prediction.py"
+            />
           </section>
         </div>
       </main>
