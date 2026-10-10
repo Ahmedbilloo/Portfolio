@@ -12,6 +12,9 @@ export default function handler(_req: any, res: any) {
       datasetRecords: model.dataset_records,
       testRocAuc: model.test_roc_auc,
       testBrierScore: model.test_brier_score,
+      testLogLoss: model.test_log_loss,
+      calibration: model.calibration || null,
+      probabilityMeaning: model.probability_meaning || "Uncalibrated model score",
       featureImportances: model.feature_importances,
       parameters: model.parameters,
     });
