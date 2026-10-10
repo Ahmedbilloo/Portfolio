@@ -58,9 +58,9 @@ export function CardioRiskInteractive() {
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
-    if (systolicBP <= diastolicBP) {
+    if (systolicBP <= diastolicBP || systolicBP - diastolicBP < 10) {
       setProbability(null);
-      setError("Systolic blood pressure must be greater than diastolic blood pressure. Correct these inputs to calculate a probability.");
+      setError("These blood pressure readings are inconsistent or implausible (pulse pressure under 10 mmHg). Enter a valid systolic/diastolic pair to calculate a probability.");
       setLoading(false);
       return () => { cancelled = true; controller.abort(); };
     }
