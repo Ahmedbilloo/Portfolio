@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { HeartPulse, AlertCircle, CheckCircle2, Sliders, Stethoscope } from "lucide-react";
 
 export function CardioRiskInteractive() {
-  const [ageYears, setAgeYears] = useState(54);
-  const [systolicBP, setSystolicBP] = useState(142);
-  const [diastolicBP, setDiastolicBP] = useState(90);
-  const [cholesterol, setCholesterol] = useState<1 | 2 | 3>(2);
-  const [weight, setWeight] = useState(78);
+  const [ageYears, setAgeYears] = useState(30);
+  const [systolicBP, setSystolicBP] = useState(120);
+  const [diastolicBP, setDiastolicBP] = useState(80);
+  const [cholesterol, setCholesterol] = useState<1 | 2 | 3>(1);
+  const [weight, setWeight] = useState(70);
   const [height, setHeight] = useState(170);
   const [isSmoker, setIsSmoker] = useState(false);
   const [isActive, setIsActive] = useState(true);
