@@ -147,7 +147,7 @@ metadata = {
     "parameters": {
         "n_estimators": 500,
         "min_samples_split": 10,
-        "class_weight": null,
+        "class_weight": None,
         "random_state": 1,
     },
     "dataset_records": int(len(data)),
