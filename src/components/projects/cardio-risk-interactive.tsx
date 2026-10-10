@@ -44,7 +44,7 @@ export function CardioRiskInteractive() {
       (cholesterol === 2 ? -1.596530 : 0) +
       (cholesterol === 3 ? -1.017687 : 0) +
       (isActive ? -2.400257 : -2.184809) +
-      (isSmoker ? -2.391265 : -2.193800);
+      (isSmoker ? -2.193800 : -2.391265);
 
     const boundedZ = Math.max(-500, Math.min(500, z));
     setProbability(1 / (1 + Math.exp(-boundedZ)));
