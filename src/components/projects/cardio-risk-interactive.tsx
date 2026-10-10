@@ -1,13 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
 import { HeartPulse, AlertCircle, CheckCircle2, Sliders, Stethoscope } from "lucide-react";
 
 export function CardioRiskInteractive() {
@@ -20,7 +11,6 @@ export function CardioRiskInteractive() {
   const [isSmoker, setIsSmoker] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [probability, setProbability] = useState<number | null>(null);
-  const [loading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"calculator" | "model">("calculator");
 
@@ -162,9 +152,7 @@ export function CardioRiskInteractive() {
             <div className="mt-8 text-center">
               <p className="text-xs text-muted-foreground">Estimated probability of the recorded dataset label</p>
               <div className="mt-2">
-                {loading && probability === null ? <div className="text-2xl font-semibold text-muted-foreground">Calculating…</div> : (
-                  <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
-                )}
+                <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">Calculated locally using the fitted Logistic Regression coefficients.</p>
             </div>
