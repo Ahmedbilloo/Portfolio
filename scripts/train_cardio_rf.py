@@ -42,7 +42,7 @@ test_X = test_X.reindex(columns=feature_columns, fill_value=0)
 model = RandomForestClassifier(
     n_estimators=500,
     min_samples_split=10,
-    class_weight="balanced",
+    class_weight=None,
     random_state=1,
     n_jobs=-1,
 )
@@ -62,6 +62,22 @@ test_probabilities = calibrator.predict_proba(logit(test_raw))[:, 1]
 roc_auc = float(roc_auc_score(test_y, test_probabilities))
 brier = float(brier_score_loss(test_y, test_probabilities))
 test_log_loss = float(log_loss(test_y, np.clip(test_probabilities, EPS, 1 - EPS)))
+# Reliability table on the untouched test set: observed positive fraction vs
+# mean predicted probability in equal-width bins.
+calibration_bins = []
+edges = np.linspace(0.0, 1.0, 11)
+for low, high in zip(edges[:-1], edges[1:]):
+    mask = (test_probabilities >= low) & (test_probabilities < high if high < 1 else test_probabilities <= high)
+    if mask.any():
+        calibration_bins.append({
+            "lower": float(low),
+            "upper": float(high),
+            "count": int(mask.sum()),
+            "mean_predicted": float(np.mean(test_probabilities[mask])),
+            "observed_rate": float(np.mean(np.asarray(test_y)[mask])),
+        })
+print(f"Dataset positive-label prevalence: {float(y.mean()):.4f}")
+print(f"Test positive-label prevalence: {float(test_y.mean()):.4f}")
 print(f"Records: {len(data)}")
 print(f"Train/calibration/test: {len(train_X)}/{len(calibration_X)}/{len(test_X)}")
 print(f"Encoded features: {feature_columns}")
@@ -131,7 +147,7 @@ metadata = {
     "parameters": {
         "n_estimators": 500,
         "min_samples_split": 10,
-        "class_weight": "balanced",
+        "class_weight": null,
         "random_state": 1,
     },
     "dataset_records": int(len(data)),
@@ -145,6 +161,9 @@ metadata = {
     "test_roc_auc": roc_auc,
     "test_brier_score": brier,
     "test_log_loss": test_log_loss,
+    "dataset_positive_prevalence": float(y.mean()),
+    "test_positive_prevalence": float(test_y.mean()),
+    "calibration_bins": calibration_bins,
     "feature_importances": {
         feature_columns[i]: float(value)
         for i, value in enumerate(model.feature_importances_)
