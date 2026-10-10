@@ -47,6 +47,18 @@ jobs:
             echo "Model artifact is unchanged."
           else
             git commit -m "Add fitted cardiovascular Random Forest artifact [skip ci]"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            # Other automated edits may land while training is running. Rebase
+            # and retry the push rather than losing the freshly trained artifact.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                echo "Published fitted model artifacts."
+                exit 0
+              fi
+              echo "Push raced with another commit (attempt $attempt); retrying."
+              sleep 2
+            done
+            echo "Could not publish model artifacts after retries."
+            exit 1
           fi
