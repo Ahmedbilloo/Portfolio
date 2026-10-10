@@ -89,6 +89,34 @@ for estimator in model.estimators_:
             p1,
         ))
 
+# Verify that the compact binary export reproduces sklearn's forest probabilities
+# before publishing it. This catches serialization/traversal errors rather than silently
+# serving plausible-looking but incorrect numbers.
+def predict_exported(sample):
+    row = sample.reindex(feature_columns, fill_value=0).to_numpy(dtype=float)
+    tree_start = 0
+    total = 0.0
+    for node_count in tree_node_counts:
+        local_index = 0
+        for _ in range(node_count + 1):
+            offset = (tree_start + local_index) * 13
+            left, right, feature, threshold, p1 = struct.unpack_from("<HHbff", tree_bytes, offset)
+            if feature < 0:
+                total += p1
+                break
+            local_index = left if row[feature] <= threshold else right
+        else:
+            raise RuntimeError("Serialized tree traversal failed to reach a leaf.")
+        tree_start += node_count
+    return total / len(tree_node_counts)
+
+reference = model.predict_proba(test_X.iloc[:64])[:, 1]
+exported = np.array([predict_exported(test_X.iloc[i]) for i in range(min(64, len(test_X)))])
+max_export_error = float(np.max(np.abs(reference[:len(exported)] - exported)))
+print(f"Max serialized-vs-sklearn probability error: {max_export_error:.8f}")
+if max_export_error > 1e-4:
+    raise RuntimeError(f"Serialized model differs from sklearn predict_proba by {max_export_error:.6f}")
+
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 TREES_OUT.write_bytes(gzip.compress(bytes(tree_bytes), compresslevel=6, mtime=0))
 metadata = {
