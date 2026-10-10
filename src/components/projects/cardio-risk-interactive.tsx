@@ -10,16 +10,6 @@ import {
 } from "recharts";
 import { HeartPulse, AlertCircle, CheckCircle2, Sliders, Stethoscope } from "lucide-react";
 
-type ModelInfo = {
-  model: string;
-  target: string;
-  targetMeaning: string;
-  datasetRecords: number;
-  testRocAuc: number;
-  testBrierScore: number;
-  featureImportances: Record<string, number>;
-};
-
 export function CardioRiskInteractive() {
   const [ageYears, setAgeYears] = useState(54);
   const [systolicBP, setSystolicBP] = useState(142);
@@ -30,8 +20,7 @@ export function CardioRiskInteractive() {
   const [isSmoker, setIsSmoker] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [probability, setProbability] = useState<number | null>(null);
-  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"calculator" | "model">("calculator");
 
@@ -40,88 +29,37 @@ export function CardioRiskInteractive() {
   const pulsePressure = systolicBP - diastolicBP;
 
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/cardio-model-info")
-      .then(async (response) => {
-        const text = await response.text();
-        let data: any;
-        try { data = JSON.parse(text); } catch { throw new Error(`Model information endpoint returned HTTP ${response.status} instead of JSON.`); }
-        if (!response.ok) throw new Error(data.error || `Model information failed (HTTP ${response.status}).`);
-        return data;
-      })
-      .then((data: ModelInfo) => { if (!cancelled) setModelInfo(data); })
-      .catch((e: Error) => { if (!cancelled) setError(e.message); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const controller = new AbortController();
-    if (systolicBP <= diastolicBP || systolicBP - diastolicBP < 10) {
+    if (
+      !Number.isFinite(ageYears) || !Number.isFinite(systolicBP) ||
+      !Number.isFinite(diastolicBP) || !Number.isFinite(weight) ||
+      !Number.isFinite(height) || ageYears <= 0 || weight <= 0 || height <= 0 ||
+      systolicBP <= diastolicBP || systolicBP - diastolicBP < 10
+    ) {
       setProbability(null);
-      setError("These blood pressure readings are inconsistent or implausible (pulse pressure under 10 mmHg). Enter a valid systolic/diastolic pair to calculate a probability.");
-      setLoading(false);
-      return () => { cancelled = true; controller.abort(); };
+      setError("Enter valid age, height, weight, and blood pressure values to calculate the model output.");
+      return;
     }
-    setLoading(true);
+
     setError(null);
-    fetch("/api/cardio-predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      signal: controller.signal,
-      body: JSON.stringify({
-        age_years: ageYears,
-        ap_hi: systolicBP,
-        ap_lo: diastolicBP,
-        cholesterol,
-        active: Number(isActive),
-        weight,
-        height,
-        smoke: Number(isSmoker),
-      }),
-    })
-      .then(async (response) => {
-        const text = await response.text();
-        let data: any;
-        try { data = JSON.parse(text); } catch { throw new Error(`Prediction endpoint returned HTTP ${response.status} instead of JSON. The server response could not be parsed.`); }
-        if (!response.ok) throw new Error(data.error || `Prediction failed (HTTP ${response.status}).`);
-        return data;
-      })
-      .then((data: { probability: number }) => {
-        if (!cancelled) setProbability(data.probability);
-      })
-      .catch((e: Error) => {
-        if (!cancelled && e.name !== "AbortError") {
-          setError(e.message);
-          setProbability(null);
-        }
-      })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; controller.abort(); };
+    // These coefficients come from the final unstandardized Logistic Regression model.
+    // Indicator columns reproduce pandas get_dummies() for cholesterol, active, and smoke.
+    const z =
+      -4.585065232959666 +
+      0.051857 * ageYears +
+      0.057058 * systolicBP +
+      0.011620 * diastolicBP +
+      0.010125 * weight -
+      0.004024 * height +
+      (cholesterol === 1 ? -1.970848 : 0) +
+      (cholesterol === 2 ? -1.596530 : 0) +
+      (cholesterol === 3 ? -1.017687 : 0) +
+      (isActive ? -2.400257 : -2.184809) +
+      (isSmoker ? -2.391265 : -2.193800);
+
+    const boundedZ = Math.max(-500, Math.min(500, z));
+    setProbability(1 / (1 + Math.exp(-boundedZ)));
   }, [ageYears, systolicBP, diastolicBP, cholesterol, isSmoker, isActive, weight, height]);
 
-  const importanceData = useMemo(() => {
-    if (!modelInfo) return [];
-    const labels: Record<string, string> = {
-      age_years: "Age",
-      ap_hi: "Systolic BP",
-      ap_lo: "Diastolic BP",
-      weight: "Weight",
-      height: "Height",
-      cholesterol_1: "Cholesterol: normal",
-      cholesterol_2: "Cholesterol: above normal",
-      cholesterol_3: "Cholesterol: high",
-      active_0: "Physical activity: no",
-      active_1: "Physical activity: yes",
-      smoke_0: "Non-smoker",
-      smoke_1: "Smoker",
-    };
-    return Object.entries(modelInfo.featureImportances)
-      .map(([key, value]) => ({ feature: labels[key] || key, importance: Number((value * 100).toFixed(2)) }))
-      .sort((a, b) => b.importance - a.importance)
-      .slice(0, 8);
-  }, [modelInfo]);
 
   return (
     <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
@@ -134,7 +72,7 @@ export function CardioRiskInteractive() {
             Cardiovascular Disease Model
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Model validation in progress. Probability output is temporarily disabled.
+            Logistic Regression · unstandardized inputs
           </p>
         </div>
         <div className="flex gap-2 text-xs font-medium">
@@ -222,13 +160,13 @@ export function CardioRiskInteractive() {
 
             </div>
             <div className="mt-8 text-center">
-              <p className="text-xs text-muted-foreground">Predicted probability (temporarily disabled)</p>
+              <p className="text-xs text-muted-foreground">Estimated probability of the recorded dataset label</p>
               <div className="mt-2">
                 {loading && probability === null ? <div className="text-2xl font-semibold text-muted-foreground">Calculating…</div> : (
                   <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
                 )}
               </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">Probability display paused while the model is validated.</p>
+              <p className="mt-2 text-[11px] text-muted-foreground">Calculated locally using the fitted Logistic Regression coefficients.</p>
             </div>
             {error && <div role="status" className="mt-6 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300"><AlertCircle className="mt-0.5 size-4 shrink-0" /><span>{error}</span></div>}
             {!error && probability !== null && <div className="mt-6 flex items-start gap-2 rounded-lg border border-border bg-surface p-3 text-xs text-muted-foreground"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" /><span>This is a model estimate of the dataset's recorded disease label, not a clinical diagnosis or a calibrated estimate of future risk.</span></div>}
@@ -240,23 +178,16 @@ export function CardioRiskInteractive() {
       {activeTab === "model" && (
         <div className="mt-6 space-y-5">
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Estimator</p><p className="mt-1 font-semibold text-foreground">{modelInfo?.model || "Random Forest"}</p><p className="mt-1 text-[10px] text-muted-foreground">500 trees · unweighted classes</p></div>
-            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Held-out ROC-AUC</p><p className="mt-1 text-2xl font-bold text-foreground">{modelInfo ? modelInfo.testRocAuc.toFixed(3) : "—"}</p><p className="mt-1 text-[10px] text-muted-foreground">20% stratified test split</p></div>
-            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Held-out Brier score</p><p className="mt-1 text-2xl font-bold text-foreground">{modelInfo ? modelInfo.testBrierScore.toFixed(3) : "—"}</p><p className="mt-1 text-[10px] text-muted-foreground">Lower is better for probability error</p></div>
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Estimator</p><p className="mt-1 font-semibold text-foreground">Logistic Regression</p><p className="mt-1 text-[10px] text-muted-foreground">L2 regularization · C = 10</p></div>
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Accuracy</p><p className="mt-1 text-2xl font-bold text-foreground">72.69%</p><p className="mt-1 text-[10px] text-muted-foreground">Held-out test set</p></div>
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">F1-score</p><p className="mt-1 text-2xl font-bold text-foreground">0.709</p><p className="mt-1 text-[10px] text-muted-foreground">Held-out test set</p></div>
           </div>
-          <p className="text-xs leading-relaxed text-muted-foreground">{modelInfo ? `Trained on ${modelInfo.datasetRecords.toLocaleString()} records. Target: ${modelInfo.targetMeaning}. The dataset is cross-sectional, so this model estimates the probability of the recorded label rather than a future time horizon.` : "Model metadata is available; prediction output remains disabled pending validation."}</p>
-          <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={importanceData} layout="vertical" margin={{ top: 8, right: 20, bottom: 8, left: 130 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v) => `${v}%`} />
-                <YAxis type="category" dataKey="feature" width={125} tick={{ fontSize: 10 }} />
-                <Tooltip formatter={(value) => [`${Number(value).toFixed(2)}%`, "Feature importance"]} />
-                <Bar dataKey="importance" fill="#0f766e" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Precision</p><p className="mt-1 text-xl font-bold text-foreground">74.86%</p></div>
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Recall</p><p className="mt-1 text-xl font-bold text-foreground">67.26%</p></div>
           </div>
-          <p className="text-[10px] leading-relaxed text-muted-foreground">Feature importance describes how the fitted forest used the encoded features; it does not imply causation. Metrics and importances are loaded from the exported fitted model artifact.</p>
+          <p className="text-xs leading-relaxed text-muted-foreground">The calculator uses age, systolic and diastolic blood pressure, weight, height, cholesterol category, physical activity, and smoking status. Categorical variables are encoded with indicator columns matching pandas get_dummies().</p>
+          <p className="text-[10px] leading-relaxed text-muted-foreground">Educational demonstration only. The output estimates the probability of the recorded label in the source dataset and is not a clinical diagnosis.</p>
         </div>
       )}
     </div>
