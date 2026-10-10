@@ -131,10 +131,10 @@ export function CardioRiskInteractive() {
             <HeartPulse className="size-3.5" /> Machine Learning Demo
           </span>
           <h3 className="mt-2 text-lg font-semibold tracking-tight text-foreground">
-            Cardiovascular Disease Probability
+            Cardiovascular Disease Model
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Predictions from the trained Random Forest using eight demographic, clinical, and lifestyle inputs.
+            Model validation in progress. Probability output is temporarily disabled.
           </p>
         </div>
         <div className="flex gap-2 text-xs font-medium">
@@ -222,13 +222,13 @@ export function CardioRiskInteractive() {
 
             </div>
             <div className="mt-8 text-center">
-              <p className="text-xs text-muted-foreground">Predicted probability of recorded cardiovascular disease</p>
+              <p className="text-xs text-muted-foreground">Predicted probability (temporarily disabled)</p>
               <div className="mt-2">
                 {loading && probability === null ? <div className="text-2xl font-semibold text-muted-foreground">Calculating…</div> : (
                   <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
                 )}
               </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">Platt-calibrated estimate of the dataset label; not a forecast of future clinical risk.</p>
+              <p className="mt-2 text-[11px] text-muted-foreground">Probability display paused while the model is validated.</p>
             </div>
             {error && <div role="status" className="mt-6 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300"><AlertCircle className="mt-0.5 size-4 shrink-0" /><span>{error}</span></div>}
             {!error && probability !== null && <div className="mt-6 flex items-start gap-2 rounded-lg border border-border bg-surface p-3 text-xs text-muted-foreground"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" /><span>This is a model estimate of the dataset's recorded disease label, not a clinical diagnosis or a calibrated estimate of future risk.</span></div>}
@@ -240,11 +240,11 @@ export function CardioRiskInteractive() {
       {activeTab === "model" && (
         <div className="mt-6 space-y-5">
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Estimator</p><p className="mt-1 font-semibold text-foreground">{modelInfo?.model || "Random Forest"}</p><p className="mt-1 text-[10px] text-muted-foreground">500 trees · balanced class weights</p></div>
+            <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Estimator</p><p className="mt-1 font-semibold text-foreground">{modelInfo?.model || "Random Forest"}</p><p className="mt-1 text-[10px] text-muted-foreground">500 trees · unweighted classes</p></div>
             <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Held-out ROC-AUC</p><p className="mt-1 text-2xl font-bold text-foreground">{modelInfo ? modelInfo.testRocAuc.toFixed(3) : "—"}</p><p className="mt-1 text-[10px] text-muted-foreground">20% stratified test split</p></div>
             <div className="rounded-xl border border-border bg-surface p-4"><p className="text-xs text-muted-foreground">Held-out Brier score</p><p className="mt-1 text-2xl font-bold text-foreground">{modelInfo ? modelInfo.testBrierScore.toFixed(3) : "—"}</p><p className="mt-1 text-[10px] text-muted-foreground">Lower is better for probability error</p></div>
           </div>
-          <p className="text-xs leading-relaxed text-muted-foreground">{modelInfo ? `Trained on ${modelInfo.datasetRecords.toLocaleString()} records. Target: ${modelInfo.targetMeaning}. The dataset is cross-sectional, so this model estimates the probability of the recorded label rather than a future time horizon.` : "Waiting for model metadata from the server."}</p>
+          <p className="text-xs leading-relaxed text-muted-foreground">{modelInfo ? `Trained on ${modelInfo.datasetRecords.toLocaleString()} records. Target: ${modelInfo.targetMeaning}. The dataset is cross-sectional, so this model estimates the probability of the recorded label rather than a future time horizon.` : "Model metadata is available; prediction output remains disabled pending validation."}</p>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={importanceData} layout="vertical" margin={{ top: 8, right: 20, bottom: 8, left: 130 }}>
