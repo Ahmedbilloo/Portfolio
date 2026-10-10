@@ -21,18 +21,20 @@ export default async function handler(req: any, res: any) {
       return;
     }
   }
+  if (Number(input.ap_hi) <= Number(input.ap_lo)) {
+    res.status(400).json({ error: "Systolic blood pressure must be greater than diastolic blood pressure. Please correct the inputs." });
+    return;
+  }
 
   try {
     const [metaResponse, treeResponse] = await Promise.all([
       fetch("https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/src/data/cardiovascular-rf-metadata.json"),
       fetch("https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/src/data/cardiovascular-rf-trees.bin.gz")
     ]);
-    if (!metaResponse.ok || !treeResponse.ok) {
-      throw new Error(`Artifact fetch status: metadata=${metaResponse.status}, trees=${treeResponse.status}`);
-    }
+    if (!metaResponse.ok || !treeResponse.ok) throw new Error(`Artifact fetch status: metadata=${metaResponse.status}, trees=${treeResponse.status}`);
     const metadata = await metaResponse.json();
-    if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 13 || !Array.isArray(metadata.tree_node_counts)) {
-      throw new Error("Model metadata has an unsupported format.");
+    if (metadata.format_version !== 3 || metadata.tree_record_bytes !== 13 || !Array.isArray(metadata.tree_node_counts) || !metadata.calibration) {
+      throw new Error("Calibrated model artifacts are not published yet. Refusing to return an uncalibrated probability.");
     }
     const compressed = Buffer.from(await treeResponse.arrayBuffer());
     const { gunzipSync } = await import("node:zlib");
@@ -53,7 +55,7 @@ export default async function handler(req: any, res: any) {
     }
     const row = (metadata.encoded_feature_columns as string[]).map((name: string) => encoded[name] ?? 0);
     let treeStart = 0;
-    let sum = 0;
+    let rawSum = 0;
     for (const nodeCount of metadata.tree_node_counts as number[]) {
       let localIndex = 0;
       let steps = 0;
@@ -63,19 +65,32 @@ export default async function handler(req: any, res: any) {
         const right = treeBuffer.readUInt16LE(offset + 2);
         const feature = treeBuffer.readInt8(offset + 4);
         if (feature < 0) {
-          sum += treeBuffer.readFloatLE(offset + 9);
+          rawSum += treeBuffer.readFloatLE(offset + 9);
           break;
         }
         localIndex = row[feature] <= treeBuffer.readFloatLE(offset + 5) ? left : right;
         steps++;
       }
-      if (steps > nodeCount) throw new Error("Tree traversal exceeded node count.");
+      if (steps > nodeCount || localIndex >= nodeCount) throw new Error("Tree traversal did not reach a leaf.");
       treeStart += nodeCount;
     }
-    const probability = sum / metadata.tree_node_counts.length;
-    res.status(200).json({ ok: true, probability, probabilityPercent: Number((probability * 100).toFixed(1)), model: metadata.model, test: req.method === "GET" });
+    const rawProbability = rawSum / metadata.tree_node_counts.length;
+    const calibration = metadata.calibration;
+    const rawClipped = Math.max(1e-6, Math.min(1 - 1e-6, rawProbability));
+    const rawLogit = Math.log(rawClipped / (1 - rawClipped));
+    const calibratedProbability = 1 / (1 + Math.exp(-(calibration.intercept + calibration.coefficient * rawLogit)));
+    res.status(200).json({
+      ok: true,
+      probability: calibratedProbability,
+      probabilityPercent: Number((calibratedProbability * 100).toFixed(1)),
+      rawProbability,
+      calibrated: true,
+      calibration: calibration.method,
+      model: metadata.model,
+      test: req.method === "GET"
+    });
   } catch (error) {
     console.error("Cardio prediction failed:", error);
-    res.status(503).json({ error: "The model could not complete the prediction.", detail: error instanceof Error ? error.message : String(error) });
+    res.status(503).json({ error: "The calibrated model could not complete the prediction.", detail: error instanceof Error ? error.message : String(error) });
   }
 }
