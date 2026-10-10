@@ -58,6 +58,12 @@ export function CardioRiskInteractive() {
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
+    if (systolicBP <= diastolicBP) {
+      setProbability(null);
+      setError("Systolic blood pressure must be greater than diastolic blood pressure. Correct these inputs to calculate a probability.");
+      setLoading(false);
+      return () => { cancelled = true; controller.abort(); };
+    }
     setLoading(true);
     setError(null);
     fetch("/api/cardio-predict", {
@@ -222,7 +228,7 @@ export function CardioRiskInteractive() {
                   <span className="text-5xl font-extrabold tracking-tight text-primary">{probability === null ? "—" : `${(probability * 100).toFixed(1)}%`}</span>
                 )}
               </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">Probability from the fitted Random Forest; not a five-year forecast.</p>
+              <p className="mt-2 text-[11px] text-muted-foreground">Platt-calibrated estimate of the dataset label; not a forecast of future clinical risk.</p>
             </div>
             {error && <div role="status" className="mt-6 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300"><AlertCircle className="mt-0.5 size-4 shrink-0" /><span>{error}</span></div>}
             {!error && probability !== null && <div className="mt-6 flex items-start gap-2 rounded-lg border border-border bg-surface p-3 text-xs text-muted-foreground"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" /><span>This is a model estimate of the dataset's recorded disease label, not a clinical diagnosis or a calibrated estimate of future risk.</span></div>}
