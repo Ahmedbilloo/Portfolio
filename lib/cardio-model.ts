@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import { gunzipSync } from "node:zlib";
 
 export type CardioModel = {
   format_version: number;
@@ -23,14 +20,7 @@ export type CardioModel = {
 export type CardioModelMetadata = Omit<CardioModel, "treeBuffer">;
 
 export function getCardioModelMetadata(): CardioModelMetadata | null {
-  try {
-    const base = path.join(process.cwd(), "src", "data");
-    const metadata = JSON.parse(fs.readFileSync(path.join(base, "cardiovascular-rf-metadata.json"), "utf8"));
-    if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 13) return null;
-    return metadata as CardioModelMetadata;
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 /**
@@ -47,21 +37,25 @@ export async function getCardioModel(): Promise<CardioModel | null> {
 
   modelPromise = (async () => {
     try {
-      const metadata = getCardioModelMetadata();
-      if (!metadata) return null;
-
-      const url = "https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/src/data/cardiovascular-rf-trees.bin.gz";
-      const response = await fetch(url, { headers: { "Accept": "application/octet-stream" } });
-      if (!response.ok) return null;
-      const compressed = Buffer.from(await response.arrayBuffer());
+      const baseUrl = "https://raw.githubusercontent.com/Ahmedbilloo/Portfolio/main/src/data/";
+      const [metadataResponse, treeResponse] = await Promise.all([
+        fetch(baseUrl + "cardiovascular-rf-metadata.json", { cache: "no-store" }),
+        fetch(baseUrl + "cardiovascular-rf-trees.bin.gz", { cache: "no-store" })
+      ]);
+      if (!metadataResponse.ok || !treeResponse.ok) throw new Error(`Model artifact fetch failed (metadata ${metadataResponse.status}, trees ${treeResponse.status}).`);
+      const metadata = await metadataResponse.json() as CardioModelMetadata;
+      if (metadata.format_version !== 2 || metadata.tree_record_bytes !== 13) throw new Error("Unsupported model artifact format.");
+      const compressed = Buffer.from(await treeResponse.arrayBuffer());
+      const { gunzipSync } = await import("node:zlib");
       const treeBuffer = gunzipSync(compressed);
       const expectedBytes = metadata.tree_node_counts.reduce((sum, count) => sum + count, 0) * metadata.tree_record_bytes;
       if (treeBuffer.byteLength !== expectedBytes) return null;
 
       cachedModel = { ...metadata, treeBuffer } as CardioModel;
       return cachedModel;
-    } catch {
-      return null;
+    } catch (error) {
+      console.error("Cardio model load failed:", error);
+      throw error;
     } finally {
       modelPromise = null;
     }
