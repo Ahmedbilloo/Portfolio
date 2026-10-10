@@ -21,8 +21,9 @@ export default async function handler(req: any, res: any) {
       return;
     }
   }
-  if (Number(input.ap_hi) <= Number(input.ap_lo)) {
-    res.status(400).json({ error: "Systolic blood pressure must be greater than diastolic blood pressure. Please correct the inputs." });
+  const pulsePressure = Number(input.ap_hi) - Number(input.ap_lo);
+  if (Number(input.ap_hi) <= Number(input.ap_lo) || pulsePressure < 10) {
+    res.status(400).json({ error: "These blood pressure readings are inconsistent or implausible (pulse pressure under 10 mmHg). Please enter a valid systolic/diastolic pair." });
     return;
   }
 
