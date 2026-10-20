@@ -22,8 +22,6 @@ import { CodeBlock } from "@/components/code-block";
 import { CodeViewerModal } from "@/components/code-viewer-modal";
 import { projectDetails, ProjectDetail } from "@/data/project-details";
 import { projects } from "@/data/site";
-import { BiForecastInteractive } from "@/components/projects/bi-forecast-interactive";
-import { LoanDefaultInteractive } from "@/components/projects/loan-default-interactive";
 import { CardioRiskInteractive } from "@/components/projects/cardio-risk-interactive";
 import { CardiovascularRocChart } from "@/components/projects/cardiovascular-roc-chart";
 import cardiovascularNotebookCode from "@/data/cardiovascular-disease-risk-prediction.py?raw";
@@ -99,9 +97,25 @@ const cardiovascularCodeSections = cardiovascularCodeSectionDefinitions.map((sec
 });
 
 export function ProjectDetailView({ slug }: { slug: string }) {
-  const detail: ProjectDetail | undefined = projectDetails[slug] || projectDetails["business-intelligence-forecasting"];
+  const detail: ProjectDetail | undefined = projectDetails[slug];
   const [activeCodeIndex, setActiveCodeIndex] = useState<number>(0);
   const [codeViewerOpen, setCodeViewerOpen] = useState<boolean>(false);
+  if (!detail) {
+    return (
+      <div className="min-h-screen bg-background text-foreground antialiased">
+        <SiteNav />
+        <main className="container-page py-20">
+          <h1 className="text-2xl font-bold tracking-tight">Project not found</h1>
+          <p className="mt-3 text-sm text-muted-foreground">This project is not currently available in the portfolio.</p>
+          <Link to="/" hash="projects" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+            <ArrowLeft className="size-4" /> Back to all projects
+          </Link>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
 
   // Next and Previous projects for fluid navigation
   const currentIndex = projects.findIndex((p) => p.slug === slug);
@@ -212,21 +226,18 @@ export function ProjectDetailView({ slug }: { slug: string }) {
             </div>
           </section>
 
-          {/* Interactive Simulator / Tool Section */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
+          {/* Project-specific interactive demonstration */}
+          {slug === "cardiovascular-risk-prediction" && (
+            <section className="space-y-4">
               <div>
                 <h2 className="text-xl font-bold tracking-tight text-foreground">Interactive Project Demo</h2>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Explore working simulations and models built for this analytics platform.
+                  Explore the cardiovascular model demonstration and its evaluation.
                 </p>
               </div>
-            </div>
-
-            {slug === "business-intelligence-forecasting" && <BiForecastInteractive />}
-            {slug === "loan-default-prediction" && <LoanDefaultInteractive />}
-            {slug === "cardiovascular-risk-prediction" && <CardioRiskInteractive />}
-          </section>
+              <CardioRiskInteractive />
+            </section>
+          )}
 
           {/* Solution & Step-by-Step Methodology */}
           <section className="space-y-6">

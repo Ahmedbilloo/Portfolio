@@ -57,24 +57,5 @@ export const projects: ProjectSummary[] = [
         "Built churn prediction models on 125,000 streaming subscribers to identify behavioral patterns associated with churn and compare classification performance.",
       tech: ["Python", "Pandas", "Scikit-learn", "Decision Tree", "Random Forest", "Gradient Boosting"],
     },
-    {
-      slug: "business-intelligence-forecasting",
-      to: "/projects/business-intelligence-forecasting",
-      title: "Business Intelligence & Forecasting Platform",
-      category: "Business Intelligence",
-      description:
-        "Developed an end-to-end BI and forecasting platform with interactive dashboards and automated reporting to optimize inventory planning and support data-driven decisions.",
-      tech: ["Python", "SQL Server", "Tableau", "Tableau Prep"],
-    },
-    {
-      slug: "loan-default-prediction",
-      to: "/projects/loan-default-prediction",
-      title: "Loan Default Prediction",
-      category: "Machine Learning",
-      description:
-        "Developed and evaluated loan default prediction models using feature engineering and Random Forest classification to identify high-risk borrowers and support credit risk assessment.",
-      tech: ["Python", "Scikit-learn", "Pandas", "XGBoost", "Machine Learning"],
-      codeUrl: "https://github.com/ahmedbilloo",
-    }
 
 ];
