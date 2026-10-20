@@ -23,7 +23,7 @@ const skills = [
 ];
 
 export default function Home() {
-  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("business-intelligence-forecasting");
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string>("retail-sales-intelligence");
   const [codeViewerOpen, setCodeViewerOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);

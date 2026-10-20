@@ -718,7 +718,7 @@ export function CustomerChurnPrediction() {
 
           <div className="flex items-center justify-between border-t border-border pt-8">
             <Link to="/projects/retail-sales-intelligence" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> Previous project</Link>
-            <Link to="/projects/business-intelligence-forecasting" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /> </Link>
+            <Link to="/projects/cardiovascular-risk-prediction" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">Next project <ArrowRight className="size-3.5" /> </Link>
           </div>
         </div>
       </main>
